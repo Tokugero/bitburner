@@ -1,6 +1,6 @@
-/**
-* @param {NS} ns
-**/
+/** @param {import("../../common").NS} ns */
+
+// Example hacking script.
 
 export async function main(ns) {
     var hostname = ns.getHostname();
