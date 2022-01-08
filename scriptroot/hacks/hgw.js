@@ -1,13 +1,16 @@
 /** @param {import("../../common").NS} ns */
 
-// Example hacking script.
-
 export async function main(ns) {
-    var hostname = ns.getHostname();
+	const args = ns.flags([["help", false]]);
+	var hostname = args._[0]
 
-	while(true){
-		await ns.hack(hostname);
-		await ns.grow(hostname);
-		await ns.weaken(hostname);
-	};
+    while (true) {
+        if (ns.getServerSecurityLevel(hostname) > ns.getServerMinSecurityLevel(hostname)) {
+            await ns.weaken(hostname);
+        } else if (ns.getServerMoneyAvailable(hostname) < ns.getServerMaxMoney(hostname)) {
+            await ns.grow(hostname);
+        } else {
+            await ns.hack(hostname);
+        }
+    }
 }

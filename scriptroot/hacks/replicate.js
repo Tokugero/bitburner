@@ -23,7 +23,16 @@ export async function virus(ns, parentServer) {
             if ( mylevel >= serverDetail.requiredHackingSkill) { 
                 ns.tprintf("%s is being infected...", serverDetail.hostname);
                 await broadstroke(ns, serverDetail); 
-                if (serverDetail.hasAdminRights) {ns.exec('hacks/replicate.js', server, 1, localhost);};
+                if (serverDetail.hasAdminRights) {
+                    ns.killall(server);
+                    ns.exec('hacks/replicate.js', server, 1, localhost);
+                    for ( let ram = 0; ram < ns.getServerMaxRam(server); ) {
+                        ns.print(ram);
+                        ram = ram + 3; //ns.getScriptRam('hacks/hgw.js', server);
+                        ns.exec('hacks/hgw.js', server, serverDetail.cpuCores, server);
+                        await ns.sleep(100);
+                    };
+                };
             };
         }
     }
@@ -32,11 +41,15 @@ export async function virus(ns, parentServer) {
 /** @param {import("../../common").NS} ns */
 
 async function broadstroke(ns, server) {
-    if (!server.sshPortOpen) { ns.brutessh(server.hostname); };
-    if (!server.ftpPortOpen) { ns.ftpcrack(server.hostname); };
+    if (!server.sshPortOpen && ns.fileExists("BruteSSH.exe", "home")) { ns.brutessh(server.hostname); };
+    if (!server.ftpPortOpen && ns.fileExists("FTPCrack.exe", "home")) { ns.ftpcrack(server.hostname); };
     // Add more injects as available
     
-    if (!server.hasAdminRights && server.numOpenPortsRequired <= server.openPortCount) { ns.nuke(server.hostname); };
+    if (server.numOpenPortsRequired <= server.openPortCount) { 
+        while ( !server.hasAdminRights ) {
+            ns.nuke(server.hostname); 
+        };
+    };
     
     await ns.sleep(100);
 }
