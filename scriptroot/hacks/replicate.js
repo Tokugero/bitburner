@@ -46,8 +46,11 @@ async function broadstroke(ns, server) {
     // Add more injects as available
     
     if (server.numOpenPortsRequired <= server.openPortCount) { 
-        while ( !server.hasAdminRights ) {
+        var isRoot = ns.hasRootAccess(server.hostname);
+        while ( !isRoot ) {
             ns.nuke(server.hostname); 
+            await ns.sleep(100);
+            isRoot = ns.hasRootAccess(server.hostname);
         };
     };
     
