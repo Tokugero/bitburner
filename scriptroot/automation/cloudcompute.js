@@ -33,10 +33,15 @@ export async function provision(ns) {
 
 async function copyAndHack(ns, server, files) {
     await ns.scp(files, "home", server);
-    var maxram = ns.getServerMaxRam(server);
-    var scriptram = ns.getScriptRam('/hacks/node-hgw.js', server);
-    var threadMath = Math.floor(maxram-scriptram);
 
-    ns.exec("/hacks/node-hgw.js", server, 1, threadMath);
+    var maxram = ns.getServerMaxRam(server)-ns.getServerUsedRam(server);
+    var scriptram = 3; // ns.getScriptRam('/hacks/hgw.js', localhost);
+    var maxThreads = Math.floor(maxram/scriptram*.9); // 70% is a margin for processing
+    if (maxThreads < 1) {
+        var threads = 1;
+    } else {
+        var threads = maxThreads;
+    };
+    ns.exec("/hacks/node-hgw.js", server, threads);
     await ns.sleep(100);
 }

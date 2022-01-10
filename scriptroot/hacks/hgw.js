@@ -5,6 +5,7 @@ export async function main(ns) {
 	var hostname = args._[0];
     while (true) {
 		await hgw(ns, hostname);
+		await ns.sleep(100);
 	};
 }
 
@@ -17,5 +18,5 @@ export async function hgw(ns, hostname) {
 		await ns.grow(hostname);
 	} else {
 		await ns.hack(hostname);
-	}
+	};
 }
