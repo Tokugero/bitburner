@@ -12,6 +12,7 @@ export async function main(ns) {
     await distribute.sendAndHack(ns, "home");
 //start stats
 //start cloudcompute
+    await cloudcompute.provision(ns);
 //start hacknet
 }
 

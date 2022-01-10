@@ -6,36 +6,40 @@ export async function main(ns) {
 }
 
 /** @param {import("../../common").NS} ns */
-
+// TODO: Split this into a dedicated replicate function & hgw start function to minimize ram usage.
 export async function virus(ns, parentServer) {
     var localhost = ns.getHostname();
     var servers = ns.scan();
     var files = ns.ls(localhost, "/hacks/");
     var mylevel = ns.getHackingLevel();
 
+    // ns.print(servers);
     for (const server of servers) {
-        ns.tprintf("Server: %s from Localhosts: %s, %s", server, localhost, parentServer);
-
-        if (server !== parentServer && server !== localhost) {
+        if (server !== parentServer && server !== localhost && server.indexOf("node-") == -1 ) {
+            // ns.printf("Working on %s from %s with parent %s...", server, localhost, parentServer);
             var serverDetail = ns.getServer(server);
-            ns.tprintf("%s is syncing...", serverDetail.hostname);
-            await ns.scp(files, localhost, server);
+
             if (mylevel >= serverDetail.requiredHackingSkill) {
-                ns.tprintf("%s is being infected...", serverDetail.hostname);
+                // ns.printf("%s is syncing...", serverDetail.hostname);
+                await ns.scp(files, localhost, server);
+                
+                // ns.printf("%s is being infected...", serverDetail.hostname);
                 await broadstroke(ns, serverDetail);
                 if (serverDetail.hasAdminRights) {
+                    var maxram = serverDetail.maxRam;
+                    var scriptram = ns.getScriptRam('/hacks/hgw.js', server);
+                    var threads = Math.floor(maxram/scriptram*.7); // 70% is a margin for processing
+
                     ns.killall(server);
+                    await ns.sleep(250);
                     ns.exec('hacks/replicate.js', server, 1, localhost);
-                    for (let ram = 0; ram < ns.getServerMaxRam(server);) {
-                        ns.print(ram);
-                        ram = ram + 3; //ns.getScriptRam('hacks/hgw.js', server);
-                        ns.exec('hacks/hgw.js', server, serverDetail.cpuCores, server);
-                        await ns.sleep(100);
-                    };
+                    await ns.sleep(100);
+                    ns.exec('hacks/hgw.js', server, threads, server);
+                    await ns.sleep(100);
                 };
             };
-        }
-    }
+        };
+    };
 }
 
 /** @param {import("../../common").NS} ns */

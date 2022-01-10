@@ -4,29 +4,39 @@
 // Manage upgrade
 // Manage running hgw
 
-export async function main(ns) {
+export async function provision(ns) {
     var ram = 8;
     var i = ns.getPurchasedServers().length;
     var files = ns.ls("home", "/hacks/");
+    files = files.concat(ns.ls("home", "/tools/"));
 
+    // ns.tprint("Preparing to manage servers.");
     while (i < ns.getPurchasedServerLimit()){
         if (ns.getServerMoneyAvailable("home") > ns.getPurchasedServerCost(ram)){
             var hostname = ns.purchaseServer("node-"+i, ram);
             ns.tprintf("Purchased: %s", hostname);
             await copyAndHack(ns, hostname, files);
             ++i;
+        } else {
+            ns.toast("You broke af, you can't buy all the servers yet. Buy more later.", "error");
+            break;
         }
     }
 
     for (const server of ns.getPurchasedServers()) {
-        ns.tprintf("Provisioning: %s", server)
+        // ns.tprintf("Provisioning: %s", server)
         ns.killall(server);
+        ns.print(files);
         await copyAndHack(ns, server, files);
     }
 }
 
 async function copyAndHack(ns, server, files) {
     await ns.scp(files, "home", server);
-    ns.exec("hacks/hgw.js", server, 3, "omega-net");
+    var maxram = ns.getServerMaxRam(server);
+    var scriptram = ns.getScriptRam('/hacks/node-hgw.js', server);
+    var threadMath = Math.floor(maxram-scriptram);
+
+    ns.exec("/hacks/node-hgw.js", server, 1, threadMath);
     await ns.sleep(100);
 }
