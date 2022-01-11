@@ -3,6 +3,7 @@ import * as mapServers from './tools/mapServers';
 
 export async function main(ns){
     await gracefulHack(ns);
+    ns.spawn("/tools/hackEverything.js");
 }
 
 /** @param {import("../../common/.").NS} ns */

@@ -25,7 +25,6 @@ export async function hack(ns) {
     var servers = await mapServers.getAllServers(ns);
     for (const server of servers) {
         if (server.hostname.indexOf("node-") == -1 ) {
-            ns.tprintf("%s: %s", server.hostname, server.hasAdminRights);
             if (server.hasAdminRights) {
                 var maxram = server.maxRam-server.ramUsed;
                 var scriptram = 3; // ns.getScriptRam('/hacks/hgw.js', localhost);
