@@ -15,7 +15,7 @@ export async function main(ns){
             await manageServer.copyAndHack(ns, hostname, files);
             i++;
         } else {
-            ns.spawn("/tools/provisionFirstServers.js");
+            ns.spawn("/tools/provisionFirstNodes.js");
         };
     }; 
 }

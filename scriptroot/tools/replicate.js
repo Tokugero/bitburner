@@ -1,4 +1,5 @@
-import * as mapServers from './tools/mapServers';
+import * as mapServers from './tools/mapServers.js';
+import * as manageServer from './tools/manageServer.js';
 
 /** @param {import("../common").NS} ns */
 
@@ -12,6 +13,7 @@ export async function main(ns) {
 export async function replicate(ns) {
     var servers = await mapServers.getAllServers(ns);
     var files = ns.ls("home","/hacks/");
+    files = files.concat(ns.ls("home","/tools/"));
     for (const server of servers) {
         if (server.hostname.indexOf("node-") == -1 ) {
             await ns.scp(files, "home", server.hostname);
@@ -26,17 +28,16 @@ export async function hack(ns) {
     for (const server of servers) {
         if (server.hostname.indexOf("node-") == -1 ) {
             if (server.hasAdminRights) {
-                var maxram = server.maxRam-server.ramUsed;
-                var scriptram = 3; // ns.getScriptRam('/hacks/hgw.js', localhost);
-                var maxThreads = Math.floor(maxram/scriptram*.9); // 70% is a margin for processing
-                if (maxThreads < 1) {
-                    var threads = 1;
-                } else {
-                    var threads = maxThreads;
-                };
+                
                 ns.killall(server.hostname);
                 await ns.sleep(100);
-                ns.exec('hacks/hgw.js', server.hostname, threads, server.hostname);
+                if (server.moneyAvailable == 0){
+                    var threads = manageServer.usableThreads(ns, server, '/hacks/node-hgw.js');
+                    ns.exec('hacks/node-hgw.js', server.hostname, threads);
+                } else {
+                    var threads = manageServer.usableThreads(ns, server, '/hacks/hgw.js');
+                    ns.exec('hacks/hgw.js', server.hostname, threads, server.hostname);
+                };
                 await ns.sleep(100);
             };
         };

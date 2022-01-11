@@ -1,9 +1,9 @@
 /** @param {import("../../common/.").NS} ns */
 
-export function usableThreads(ns, server) {
+export function usableThreads(ns, server, script) {
     var maxram = server.maxRam-server.ramUsed;
-    var scriptram = 3; // ns.getScriptRam('/hacks/hgw.js', localhost);
-    var maxThreads = Math.floor(maxram/scriptram*.9); // 70% is a margin for processing
+    var scriptram = ns.getScriptRam(script, "home");
+    var maxThreads = Math.floor(maxram/scriptram*.7); // 70% is a margin for processing
     if (maxThreads < 1) {
         var threads = 1;
     } else {

@@ -28,8 +28,13 @@ export async function gracefulHack(ns){
                 await ns.sleep(20);
                 isRoot = ns.hasRootAccess(server.hostname);
                 if (isRoot) {
-                    var threads = manageServer.usableThreads(server);
-                    ns.exec('hacks/hgw.js', server.hostname, threads, server.hostname);
+                    if (server.moneyAvailable = 0){
+                        var threads = manageServer.usableThreads(ns, server, "hacks/node-hgw.js");
+                        ns.exec('hacks/node-hgw.js', server.hostname, threads);
+                    } else {
+                        var threads = manageServer.usableThreads(ns, server, "hacks/hgw.js");
+                        ns.exec('hacks/hgw.js', server.hostname, threads, server.hostname);
+                    };
                 }
             };
         };
