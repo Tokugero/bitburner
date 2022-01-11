@@ -9,7 +9,7 @@ import * as stats from 'automation/stats.js';
 
 export async function main(ns) { 
 //start distribute
-    await distribute.sendAndHack(ns, "home");
+    await distribute.sendAndHack(ns);
 //start stats
 //start cloudcompute
     await cloudcompute.provision(ns);
