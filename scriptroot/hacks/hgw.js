@@ -17,6 +17,7 @@ export async function hgw(ns, hostname) {
 	} else if (ns.getServerMoneyAvailable(hostname) < ns.getServerMaxMoney(hostname) * 0.9) {
 		await ns.grow(hostname);
 	} else {
-		await ns.hack(hostname);
+		var stolen = await ns.hack(hostname);
+		ns.toast("Stole " + stolen + " from " + hostname, success, 30000);
 	};
 }

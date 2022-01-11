@@ -1,4 +1,5 @@
 import * as mapServers from './tools/mapServers';
+
 /** @param {import("../../common/.").NS} ns */
 
 export async function main(ns){
@@ -14,7 +15,7 @@ export async function findChallenges(ns){
     for (const server of allServers){
         var findFiles = ns.ls(server.hostname, ".cct");
         if (findFiles.length > 0){
-            challenges += "FOUND CCT CHALLENGE: " + findFiles + "ON: " + server.hostname + "\n";
+            challenges += "FOUND CCT CHALLENGE: " + findFiles + " ON: " + server.hostname + "\n";
         }
         await ns.sleep(20);
     };

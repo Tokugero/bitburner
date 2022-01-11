@@ -18,4 +18,3 @@ export async function main(ns) {
     //start hacknet
 }
 
-//wait x time and do over

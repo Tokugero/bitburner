@@ -1,4 +1,6 @@
 import * as mapServers from './tools/mapServers';
+import * as manageServer from './tools/manageServer';
+
 /** @param {import("../../common/.").NS} ns */
 
 export async function main(ns){
@@ -25,6 +27,10 @@ export async function gracefulHack(ns){
                 ns.nuke(server.hostname);
                 await ns.sleep(20);
                 isRoot = ns.hasRootAccess(server.hostname);
+                if (isRoot) {
+                    var threads = manageServer.usableThreads(server);
+                    ns.exec('hacks/hgw.js', server.hostname, threads, server.hostname);
+                }
             };
         };
         await ns.sleep(20);
