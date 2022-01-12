@@ -47,16 +47,9 @@ export async function upgradeNode(ns, ram, server, files) {
 /** @param {import("../../common/.").NS} ns */
 
 export async function copyAndHack(ns, server, files) {
-    await ns.scp(files, "home", server);
+    await ns.scp(files, "home", server.hostname);
 
-    var maxram = ns.getServerMaxRam(server)-ns.getServerUsedRam(server);
-    var scriptram = ns.getScriptRam('/hacks/node-hgw.js', "home");
-    var maxThreads = Math.floor(maxram/scriptram*.9); // 70% is a margin for processing
-    if (maxThreads < 1) {
-        var threads = 1;
-    } else {
-        var threads = maxThreads;
-    };
-    ns.exec("/hacks/node-hgw.js", server, threads);
+    var threads = usableThreads(ns, server, "/hacks/node-hgw.js");
+    ns.exec("/hacks/node-hgw.js", server.hostname, threads);
     await ns.sleep(100);
 }
