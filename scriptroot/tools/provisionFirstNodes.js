@@ -12,7 +12,7 @@ export async function main(ns){
     while (i < ns.getPurchasedServerLimit()){
         if (ns.getServerMoneyAvailable("home") > ns.getPurchasedServerCost(ram)){
             var hostname = ns.purchaseServer(`${ram}-node`, ram);
-            await manageServer.copyAndHack(ns, hostname, files);
+            await manageServer.copyAndHack(ns, ns.getServer(hostname), files);
             i++;
         } else {
             ns.spawn("/tools/provisionFirstNodes.js");

@@ -3,7 +3,7 @@ import * as manageServer from './tools/manageServer';
 /** @param {import("../../common/.").NS} ns */
 
 export async function provision(ns) {
-    var upgradeRam = 1024; // 8 is the starting value for this function.
+    var upgradeRam = 32; // 8 is the starting value for this function.
     /**
      * 8 = ~14m
      * 16 = ~21m
@@ -32,9 +32,6 @@ export async function provision(ns) {
     };
 
     for (const server of ns.getPurchasedServers()) {
-        // ns.tprintf("Provisioning: %s", server)
-        ns.killall(server);
-        ns.print(files);
         await manageServer.copyAndHack(ns, ns.getServer(server), files);
     }
 }

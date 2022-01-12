@@ -4,10 +4,10 @@ export function usableThreads(ns, server, script) {
     var maxram = server.maxRam-server.ramUsed;
     var scriptram = ns.getScriptRam(script, "home");
     var maxThreads = Math.floor(maxram/scriptram*.7); // 70% is a margin for processing
-    if (maxThreads > 1) {
-        var threads = maxThreads;
-    } else {
+    if (maxThreads < 1 || !maxThreads) {
         var threads = 1;
+    } else {
+        var threads = maxThreads;
     };
     return threads;
 }
@@ -37,7 +37,7 @@ export async function upgradeNode(ns, ram, server, files) {
             await ns.sleep(20);
             server = ns.purchaseServer(`${ram}-node`, ram);
             await ns.sleep(20);
-            await copyAndHack(ns, server, files);
+            await copyAndHack(ns, ns.getServer(server), files);
         } else {
             await ns.sleep(600000);
         };
@@ -51,5 +51,5 @@ export async function copyAndHack(ns, server, files) {
 
     var threads = usableThreads(ns, server, "/hacks/node-hgw.js");
     ns.exec("/hacks/node-hgw.js", server.hostname, threads);
-    await ns.sleep(100);
+    await ns.sleep(20);
 }

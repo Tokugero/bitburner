@@ -1,5 +1,4 @@
 import * as mapServers from './tools/mapServers.js';
-import * as hgw from './hacks/hgw.js';
 
 /** @param {import("../../common").NS} ns */
 
@@ -8,6 +7,7 @@ export async function main(ns) {
     while (true) {
         var worstServer = ns.getServer("n00dles");
         for (const server of allServers) {
+            // need to plug in an actual decision tree here.
             if ( server.hasAdminRights && server.getServerMaxMoney > 1 && worstServer.serverGrowth < server.serverGrowth) {
                 worstServer = server;
             };
