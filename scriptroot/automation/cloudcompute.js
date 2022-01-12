@@ -35,6 +35,6 @@ export async function provision(ns) {
         // ns.tprintf("Provisioning: %s", server)
         ns.killall(server);
         ns.print(files);
-        await manageServer.copyAndHack(ns, server, files);
+        await manageServer.copyAndHack(ns, ns.getServer(server), files);
     }
 }

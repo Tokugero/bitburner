@@ -31,10 +31,10 @@ export async function gracefulHack(ns){
                 isRoot = ns.hasRootAccess(server.hostname);
                 if (isRoot) {
                     if (server.moneyAvailable = 0){
-                        var threads = manageServer.usableThreads(ns, server, "hacks/node-hgw.js");
+                        var threads = manageServer.usableThreads(ns, server, "/hacks/node-hgw.js");
                         ns.exec('hacks/node-hgw.js', server.hostname, threads);
                     } else {
-                        var threads = manageServer.usableThreads(ns, server, "hacks/hgw.js");
+                        var threads = manageServer.usableThreads(ns, server, "/hacks/hgw.js");
                         ns.exec('hacks/hgw.js', server.hostname, threads, server.hostname);
                     };
                 };
