@@ -6,6 +6,8 @@ export async function provision(ns) {
     var upgradeRam = 1024; // 8 is the starting value for this function.
     /**
      * 8 = ~14m
+     * 16 = ~21m
+     * 128 = ~40m
      * 1024 = ~1.5b
      */
     

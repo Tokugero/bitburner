@@ -1,7 +1,6 @@
 import * as cloudcompute from 'automation/cloudcompute.js';
 import * as distribute from 'automation/distribute.js';
 import * as hacknet from 'automation/hacknet.js';
-import * as root_boxes from 'automation/root-boxes.js';
 import * as stats from 'automation/stats.js';
 
 
