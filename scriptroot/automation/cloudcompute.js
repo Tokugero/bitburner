@@ -1,9 +1,9 @@
-import * as manageServer from './tools/manageServer';
+import * as manageServer from './tools/manageServer.js';
 
 /** @param {import("../../common/.").NS} ns */
 
 export async function provision(ns) {
-    var upgradeRam = 32; // 8 is the starting value for this function.
+    var upgradeRam = 2048; // 8 is the starting value for this function.
     /**
      * 8 = ~14m
      * 16 = ~21m

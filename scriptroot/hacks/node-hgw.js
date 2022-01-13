@@ -3,15 +3,10 @@ import * as mapServers from './tools/mapServers.js';
 /** @param {import("../../common").NS} ns */
 
 export async function main(ns) {
-    var allServers = await mapServers.getAllServers(ns);
     while (true) {
-        var worstServer = ns.getServer("n00dles");
-        for (const server of allServers) {
-            // need to plug in an actual decision tree here.
-            if ( server.hasAdminRights && server.getServerMaxMoney > 1 && worstServer.serverGrowth < server.serverGrowth) {
-                worstServer = server;
-            };
-        };
+        
+        var worstServer = await rando(ns);
+        
         await nodehgw(ns, worstServer.hostname);
 	};
 }
@@ -25,4 +20,17 @@ export async function nodehgw(ns, hostname) {
 		var stolen = await ns.hack(hostname);
 		ns.toast(`Stole ${stolen} from ${hostname}`);
 	};
+}
+
+async function rando(ns) {
+    var allServers = await mapServers.getAllServers(ns);
+    var eligibleServers = [];
+    for (const server of allServers){
+        if (!server.purchasedByPlayer && server.moneyAvailable > 0 && server.hasAdminRights ){
+            eligibleServers.push(server);
+        }
+    }
+    var randomServer = eligibleServers[Math.floor(Math.random() * eligibleServers.length)];
+
+    return randomServer;
 }
