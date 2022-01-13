@@ -1,6 +1,5 @@
-/** @param {import("../../common/.").NS} ns */
+/** @param {import("../../common").NS} ns */
 
-// Manage hacknet servers
-
-// Decide to buy
-// Decide to upgrade
+export async function startBuying(ns) {
+    ns.exec('/tools/manageHacknet.js', "home");
+}

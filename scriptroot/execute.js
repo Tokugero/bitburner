@@ -15,5 +15,6 @@ export async function main(ns) {
     //start cloudcompute
     await cloudcompute.provision(ns);
     //start hacknet
+    await hacknet.startBuying(ns);
 }
 
