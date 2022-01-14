@@ -11,10 +11,11 @@ export async function main(ns) {
 /** @param {import("../common").NS} ns */
 
 export async function replicate(ns) {
-    var servers = await mapServers.getAllServers(ns);
+    var allServers = await mapServers.getAllServers(ns);
     var files = ns.ls("home","/hacks/");
     files = files.concat(ns.ls("home","/tools/"));
-    for (const server of servers) {
+    for (const server of allServers) {
+        ns.print(server);
         if (server.hostname.indexOf("node-") == -1 ) {
             await ns.scp(files, "home", server.hostname);
         };
@@ -24,8 +25,8 @@ export async function replicate(ns) {
 /** @param {import("../common").NS} ns */
 
 export async function hack(ns) {
-    var servers = await mapServers.getAllServers(ns);
-    for (const server of servers) {
+    var allServers = await mapServers.getAllServers(ns);
+    for (const server of allServers) {
         if (server.hostname.indexOf("node-") == -1 ) {
             if (server.hasAdminRights) {
                 

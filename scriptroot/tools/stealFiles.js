@@ -28,5 +28,5 @@ export async function findChallenges(ns){
         await ns.sleep(20);
     };
     ns.write("/data/challenges.txt", challenges, "w");
-
 }
+

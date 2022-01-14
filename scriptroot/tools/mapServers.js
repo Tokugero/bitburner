@@ -21,13 +21,17 @@ export async function getAllServers(ns) {
 
 /** @param {import("../../common/.").NS} ns */
 
-async function getServersDetails(ns, parentNode, origin = parentNode, branch = []) {
+async function getServersDetails(ns, parentNode, origin = parentNode, trail = [], branch = []) {
     var base = ns.scan(parentNode.hostname);
+    trail = [...trail, parentNode.hostname];
     for (const server of base) {
         if (server !== parentNode.hostname && server !== origin.hostname) {
+            var files = ns.ls(server);
             var serverDetails = ns.getServer(server);
+            serverDetails.files = files;
+            serverDetails.trail = trail;
             branch.push(serverDetails);
-            branch = branch.concat(await getServersDetails(ns, serverDetails, parentNode)); 
+            branch = branch.concat(await getServersDetails(ns, serverDetails, parentNode, trail)); 
         };
     };
     return branch;
