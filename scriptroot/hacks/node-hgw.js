@@ -12,14 +12,18 @@ export async function main(ns) {
 }
 
 export async function nodehgw(ns, hostname) {
-	if (ns.getServerSecurityLevel(hostname) > ns.getServerMinSecurityLevel(hostname) + 0.05) {
-		await ns.weaken(hostname);
-	} else if (ns.getServerMoneyAvailable(hostname) < ns.getServerMaxMoney(hostname) * 0.9) {
-		await ns.grow(hostname);
-	} else {
-		var stolen = await ns.hack(hostname);
-		ns.toast(`Stole ${stolen} from ${hostname}`);
-	};
+    var cont = true;
+    while(cont){
+        if (ns.getServerSecurityLevel(hostname) > ns.getServerMinSecurityLevel(hostname) + 0.05) {
+            await ns.weaken(hostname);
+        } else if (ns.getServerMoneyAvailable(hostname) < ns.getServerMaxMoney(hostname) * 0.9) {
+            await ns.grow(hostname);
+        } else {
+            var stolen = await ns.hack(hostname);
+            cont = false;
+            ns.toast(`Stole ${stolen} from ${hostname} using ${ns.getHostname()}`);
+        }
+    };
 }
 
 async function rando(ns) {
