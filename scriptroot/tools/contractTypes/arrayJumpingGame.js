@@ -1,8 +1,8 @@
 /** @param {import("../../common/.").NS} ns */
 
-export async function main(ns){ return; };
+export function main(){ return; };
 
-export async function solve(ns, data){ 
+export function solve(data){ 
     /* You are given the following array of integers:
         6,3,0,6,0,1,8,6,3,3,5,0,5
     Each element in the array represents your MAXIMUM jump length at that position. 

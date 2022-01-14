@@ -8,22 +8,25 @@ export async function main(ns){
 
 /** @param {import("../../common/.").NS} ns */
 
-export async function handle(ns, contractFile, server){
-    games = getHandledTypes(ns);
-
-    var type = ns.codingcontract.getContractType(contractFile, server.hostname);
+export async function handle(ns, contractFile, server, contractType){
     var data = ns.codingcontract.getData(contractFile, server.hostname);
-    
-    var answer = games[type].solve(data);
-
-    var reward = ns.codingcontract.attempt(answer, contractFile, server, {returnReward: true});
-    return reward;
+    let answer = "";
+    switch (contractType) {
+        case 'Array Jumping Game':
+            answer = arrayJumpingGame.solve(data);
+        default:
+            ns.print(`Contract type not handled yet.`);
+    };
+    if (answer !== ""){
+        let reward = ns.codingcontract.attempt(answer, contractFile, server.hostname, {returnReward: true});
+        return reward;
+    } else {
+        return "Just kidding, you failed to answer anything. Debug me!";
+    };
 }
 
-export async function getHandledTypes(){
-    var games = {
-        "Array Jumping Game": arrayJumpingGame
-    };
+export function getHandledTypes(){
+    var games = ["Array Jumping Game"];
 
     return games;
 }
