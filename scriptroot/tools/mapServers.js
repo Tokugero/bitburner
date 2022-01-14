@@ -22,6 +22,7 @@ export async function getAllServers(ns) {
 /** @param {import("../../common/.").NS} ns */
 
 async function getServersDetails(ns, parentNode, origin = parentNode, trail = [], branch = []) {
+    // TODO: refactor this to be key filterable rather than just a list
     var base = ns.scan(parentNode.hostname);
     trail = [...trail, parentNode.hostname];
     for (const server of base) {

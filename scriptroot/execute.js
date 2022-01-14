@@ -16,5 +16,12 @@ export async function main(ns) {
     await cloudcompute.provision(ns);
     //start hacknet
     await hacknet.startBuying(ns);
+
+    ns.tprint(`
+    Helpful alias commands:
+    \talias init="run execute.js" --tail
+    \talias get="run tools/genData.js"
+    ${"-".repeat(80)}
+    `);
 }
 
