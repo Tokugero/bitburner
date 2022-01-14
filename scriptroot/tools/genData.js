@@ -9,6 +9,10 @@ export async function main(ns){
     ]);
     if (args.connect !== ""){
         ns.tprint(`\n${await connectionString(ns, args.connect)}`);
+    } else if (args.help || !args._[0]){
+        ns.tprint(`
+        --connect <hostname>    \tGenerates connection string to hostname
+        `);
     };
 }
 
