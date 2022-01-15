@@ -21,6 +21,7 @@ export async function main(ns) {
     Helpful alias commands:
     \talias init="run execute.js" --tail
     \talias get="run tools/genData.js"
+    \talias hackabit="run hacks/node-hgw.js" \t#REMEMBER TO CALC THREADS FOR THIS
     ${"-".repeat(80)}
     `);
 }

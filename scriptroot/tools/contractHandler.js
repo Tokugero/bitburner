@@ -14,8 +14,10 @@ export async function handle(ns, contractFile, server, contractType){
     switch (contractType) {
         case 'Array Jumping Game':
             answer = arrayJumpingGame.solve(data);
+            break;
         default:
             ns.print(`Contract type not handled yet.`);
+            break;
     };
     if (answer !== ""){
         let reward = ns.codingcontract.attempt(answer, contractFile, server.hostname, {returnReward: true});

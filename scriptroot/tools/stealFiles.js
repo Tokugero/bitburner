@@ -22,7 +22,12 @@ export async function findChallenges(ns) {
                 if (handledTypes.includes(contractType)) {
                     ns.tprint(`Solved Contract for: ${await contractHandler.handle(ns, file, server, contractType)}`);
                 } else {
-                    challenges += "FOUND CCT CHALLENGE: " + file + " ON: " + server.hostname + "\n";
+                    challenges += `
+                        ${"#".repeat(80)}
+                        Challenge: ${file} - On: ${server.hostname} 
+                        Type: ${contractType}
+                        ${"-".repeat(80)}
+                        ${ns.codingcontract.getDescription(file, server.hostname)} `;
                 };
             };
         };
