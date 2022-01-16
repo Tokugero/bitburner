@@ -9,4 +9,6 @@ export function solve(data){
 
 Determine the maximum possible profit you can earn using at most one transaction (i.e. you can only buy and sell the stock once). If no profit can be made then the answer should be 0. Note that you have to buy the stock before you can sell it */
 
+
+
 };

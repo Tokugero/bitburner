@@ -6,13 +6,13 @@ import * as cloudcompute from 'automation/cloudcompute.js';
 export async function main(ns) {
     const args = ns.flags([
         ["help", false],
-        ["connect", ""],
+        ["tunnel", ""],
         ["analyze", ""],
         ["search", ""],
         ["morenodes", 0]
     ]);
-    if (args.connect !== "") {
-        let fuzzy = await searchServers(ns, args.connect);
+    if (args.tunnel !== "") {
+        let fuzzy = await searchServers(ns, args.tunnel);
         if (fuzzy.length > 1){
             ns.tprint(`\nYour connection request was not specific enough.`);
             return;

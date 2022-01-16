@@ -9,23 +9,23 @@ export function solve(data){
     This means that if you are at position i and your maximum jump length is n, you can jump to any position from i to i+n. 
     Assuming you are initially positioned at the start of the array, determine whether you are able to reach the last index exactly.
     Your answer should be submitted as 1 or 0, representing true and false respectively */
-    var place = 0;
+    var placeIndex = 0;
     var cont = true;
     var maxTry = 9001;
 
     while(maxTry > 0){
         maxTry--;
-        var maxJump = data[place];
+        var maxJump = data[placeIndex];
 
-        if (data[place] == data.length){
+        if (data[placeIndex] == data.length){
             return 1;
         };
 
         var highestVal = 1;
         var nextStep = 0;
-        var tmpArray = data.slice(place, (place+maxJump));
+        var tmpArray = data.slice(placeIndex, (placeIndex+maxJump));
         for (const step in tmpArray){
-            var nextHop = (tmpArray[step]+place);
+            var nextHop = (tmpArray[step]+placeIndex);
             if (nextHop == data.length){
                 return 1;
             } else if (nextHop >= highestVal){
@@ -35,7 +35,7 @@ export function solve(data){
             };
         };
 
-        place = parseInt(place)+parseInt(nextStep)+1;
+        placeIndex = parseInt(placeIndex)+parseInt(nextStep)+1;
     };
 
     return 0;

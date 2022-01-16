@@ -5,7 +5,7 @@
 
 export async function main(ns){ 
     await upgradeLoop(ns);
-    ns.spawn("/tools/manageHacknet.js", 1, "home");
+    ns.spawn("/tools/manageHacknet.js", 1);
  };
 
  /** @param {import("../../common/.").NS} ns */
