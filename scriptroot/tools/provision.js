@@ -1,3 +1,4 @@
+import * as manageUpgrade from './tools/manageUpgrade.js';
 import * as manageServer from './tools/manageServer.js';
 
 /** @param {import("../../common").NS} ns */
@@ -31,7 +32,7 @@ export async function provision(ns, upgradeRam = 8) {
             };
         };
         if (minRam < upgradeRam) {
-            await manageServer.upgradeNodes(ns, files, upgradeRam);
+            await manageUpgrade.upgradeNodes(ns, files, upgradeRam);
         };
     } else {
         ns.tprint(`It will cost more than you have to upgrade your cluster. Cost = ${upgradeCost}`);

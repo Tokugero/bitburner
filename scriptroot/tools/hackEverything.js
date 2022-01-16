@@ -16,7 +16,7 @@ export async function gracefulHack(ns){
 
     for (const server of allServers){
         var isRoot = server.hasAdminRights;
-        if (mylevel >= ns.getServerRequiredHackingLevel(server.hostname) && !isRoot) {
+        if (mylevel >= server.requiredHackingSkill && !isRoot) {
 
             if (!server.sshPortOpen && ns.fileExists("BruteSSH.exe", "home")) { ns.toast(`Bruteforcing ${server.hostname}: ${ns.brutessh(server.hostname)}`); };
             if (!server.ftpPortOpen && ns.fileExists("FTPCrack.exe", "home")) { ns.toast(`FTPCracking ${server.hostname}: ${ns.ftpcrack(server.hostname)}`) };
