@@ -27,7 +27,7 @@ export async function main(ns) {
         ns.tprint(`\nAttempting to purchase nodes. Try scanning after a bit.`);
     } else if (args.help || !args._[0]) {
         ns.tprint(`
-        --connect <hostname>    \tGenerates connection string to hostname
+        --tunnel <hostname>    \tGenerates connection string to hostname
         --analyze <hostname>    \tDisplays detailed data about server
         --search <substring>    \tFind hosts that are beyond the analyze command
         --morenodes <int>      \tUpgrade purchased nodes to desired ram value

@@ -22,8 +22,8 @@ export async function main(ns) {
     //start cloudcompute
     await cloudcompute.provision(ns, 8);
     ns.tprint("Purchasing first servers.");
-    await ns.sleep(5000); // This takes a little longer to run
-
+    await ns.sleep(5000); 
+    
     //start hacknet
     await hacknetManager.startBuying(ns);
     ns.tprint("Initializing hacknet manager.");
@@ -33,7 +33,7 @@ export async function main(ns) {
     Helpful alias commands:
     \talias init="run execute.js" --tail
     \talias get="run tools/genData.js"
-    \talias hackabit="run hacks/node-hgw.js" \t#REMEMBER TO CALC THREADS FOR THIS
+    \talias hackabit="run hacks/node-hgw.js"
     ${"-".repeat(80)}
     `);
 }
