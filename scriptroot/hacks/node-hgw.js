@@ -14,7 +14,17 @@ export async function main(ns) {
 export async function nodehgw(ns, server, target) {
     var cont = true;
     while(cont){
-        const freeThreads = Math.floor((server.maxRam-8) / 1.75); // 1.75 = ram usage of hack/grow/weaken.js. 6 = headroom
+        let freeThreads = 1;
+        if (server.hostname == "home"){
+            if (server.maxRam < 32) {
+                ns.tprint("You don't have a lot of ram, some of this may not work as expected. Upgrade to at least 32 asap!");
+                freeThreads = Math.floor((server.maxRam) / 2);
+            }
+            freeThreads = Math.floor((server.maxRam-24) / 2); // 2 = ram usage of hack/grow/weaken.js. 14 = headroom for this script + ctrl loop
+        } else {
+            freeThreads = Math.floor((server.maxRam) / 2);
+        };
+        
         if (target.hackDifficulty > target.minDifficulty + 0.05) {
             ns.exec("hacks/weaken.js", server.hostname, freeThreads, target.hostname);
             await ns.sleep(ns.getWeakenTime(target.hostname)+100);
