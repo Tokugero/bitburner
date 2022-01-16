@@ -1,21 +1,33 @@
 import * as cloudcompute from 'automation/cloudcompute.js';
 import * as distribute from 'automation/distribute.js';
-import * as hacknet from 'automation/hacknet.js';
-import * as stats from 'automation/stats.js';
+import * as hacknetManager from 'automation/hacknet.js';
 
 
 /** @param {import("../common").NS} ns */
 
 export async function main(ns) { 
     //start distribute
-    await distribute.sendAndHack(ns);
+    await distribute.replicate(ns);
+    ns.tprint("Initializing File Replicators.");
+    await ns.sleep(100); // Try to make all scripts start at different times
+    await distribute.root(ns);
+    ns.tprint("Initializing RCEs.");
+    await ns.sleep(100);
+
     //start file discovery
     await distribute.finderKeeper(ns);
-    //start stats
+    ns.tprint("Initializing file scrapers.");
+    await ns.sleep(100);
+
     //start cloudcompute
-    await cloudcompute.provision(ns);
+    await cloudcompute.provision(ns, 8);
+    ns.tprint("Purchasing first servers.");
+    await ns.sleep(3000); // This takes a little longer to run
+
     //start hacknet
-    await hacknet.startBuying(ns);
+    await hacknetManager.startBuying(ns);
+    ns.tprint("Initializing hacknet manager.");
+    await ns.sleep(100);
 
     ns.tprint(`
     Helpful alias commands:
@@ -25,4 +37,3 @@ export async function main(ns) {
     ${"-".repeat(80)}
     `);
 }
-

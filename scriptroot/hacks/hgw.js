@@ -18,6 +18,6 @@ export async function hgw(ns, hostname) {
 		await ns.grow(hostname);
 	} else {
 		var stolen = await ns.hack(hostname);
-		ns.toast(`Stole ${stolen} from ${hostname}`);
+		ns.print(`Stole ${stolen} from ${hostname}`);
 	};
 }

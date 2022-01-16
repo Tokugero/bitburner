@@ -4,6 +4,8 @@
 
 export async function main(ns) {
     await getAllServers(ns);
+    //TODO: Write this to a file rather than deal with returns, make the upstream apps read from the results of the file
+    //      to save on the memory foot print of getServer() - 2GB
     // sample
     // for (const server of allServers) {
     //     ns.print(server.parent.hostname);
