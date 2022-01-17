@@ -32,7 +32,7 @@ export async function upgradeNode(ns, ram, server, files) {
             ns.killall(server);
             await ns.sleep(20);
             ns.deleteServer(server);
-            await ns.wget(`${url}/boughtserver?secret=${secret}&hostname=${server}`, `/dev/null.txt`);
+            await ns.wget(`${url}/rmserver?secret=${secret}&hostname=${server}`, `/dev/null.txt`);
             await ns.sleep(20);
             server = ns.purchaseServer(`${ram}-node`, ram);
             await ns.wget(`${url}/boughtserver?secret=${secret}&hostname=${server}&ram=${ram}`, `/dev/null.txt`);

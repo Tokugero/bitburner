@@ -38,18 +38,13 @@ export async function hack(ns) {
     var allServers = await mapServers.getAllServers(ns);
     for (const server of allServers) {
         // Adding shim of 16 gig minimum ram to prevent servers from having to split their resources.
-        if (server.hostname.indexOf("node-") == -1 && server.maxRam > 16) {
+        if (server.hostname.indexOf("node-") == -1) {
             if (server.hasAdminRights) {
                 
                 ns.killall(server.hostname);
                 await ns.sleep(100);
-                if (server.moneyAvailable == 0){
-                    var threads = manageServer.usableThreads(ns, server, '/hacks/node-hgw.js');
-                    ns.exec('hacks/node-hgw.js', server.hostname, threads);
-                } else {
-                    var threads = manageServer.usableThreads(ns, server, '/hacks/hgw.js');
-                    ns.exec('hacks/hgw.js', server.hostname, threads, server.hostname);
-                };
+                var threads = manageServer.usableThreads(ns, server, '/hacks/node-hgw.js');
+                ns.exec('hacks/node-hgw.js', server.hostname);
                 await ns.sleep(100);
             };
         };
