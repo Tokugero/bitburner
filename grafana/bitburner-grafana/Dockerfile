@@ -2,7 +2,7 @@ FROM node
 
 RUN git clone https://github.com/oatmealine/bitburner-grafana.git
 
-WORKDIR bitburner-grafana
+WORKDIR /bitburner-grafana
 
 RUN npm install
 

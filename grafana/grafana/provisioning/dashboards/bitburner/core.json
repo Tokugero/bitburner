@@ -384,6 +384,97 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 19,
+        "w": 6,
+        "x": 17,
+        "y": 0
+      },
+      "id": 9,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_POSTGRES}"
+          },
+          "format": "time_series",
+          "group": [
+            {
+              "params": [
+                "hostname"
+              ],
+              "type": "column"
+            }
+          ],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  max(ram) AS \"ram\"\nFROM boughtservers\nGROUP BY hostname\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ram"
+                ],
+                "type": "column"
+              },
+              {
+                "params": [
+                  "max"
+                ],
+                "type": "aggregate"
+              },
+              {
+                "params": [
+                  "ram"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "boughtservers",
+          "timeColumn": "time",
+          "where": []
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "palette-classic"
           },
           "custom": {
@@ -633,26 +724,25 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
-          }
+          },
+          "unit": "currencyUSD"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 10,
+        "h": 5,
+        "w": 3,
         "x": 6,
         "y": 5
       },
-      "id": 9,
+      "id": 11,
       "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -660,7 +750,7 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true
+        "textMode": "auto"
       },
       "pluginVersion": "8.3.3",
       "targets": [
@@ -673,20 +763,21 @@
           "group": [
             {
               "params": [
-                "hostname"
+                "$__interval",
+                "none"
               ],
-              "type": "column"
+              "type": "time"
             }
           ],
           "metricColumn": "none",
           "rawQuery": false,
-          "rawSql": "SELECT\n  time AS \"time\",\n  max(ram) AS \"ram\"\nFROM boughtservers\nGROUP BY hostname\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroupAlias(time,$__interval),\n  max(money) AS \"money\"\nFROM money\nGROUP BY 1\nORDER BY 1",
           "refId": "A",
           "select": [
             [
               {
                 "params": [
-                  "ram"
+                  "money"
                 ],
                 "type": "column"
               },
@@ -698,20 +789,24 @@
               },
               {
                 "params": [
-                  "ram"
+                  "money"
                 ],
                 "type": "alias"
               }
             ]
           ],
-          "table": "boughtservers",
+          "table": "money",
           "timeColumn": "time",
+          "timeColumnType": "timestamp",
           "where": []
         }
       ],
-      "type": "bargauge"
+      "title": "Player Money",
+      "transparent": true,
+      "type": "stat"
     }
   ],
+  "refresh": "5s",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],
@@ -719,7 +814,7 @@
     "list": []
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
