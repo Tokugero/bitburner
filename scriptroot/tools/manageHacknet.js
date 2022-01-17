@@ -13,6 +13,8 @@ Manage hacknet servers ns.hacknet.*
  */
 
 export async function main(ns){ 
+    // TODO: Give this an off trigger based on progression. At a certain point these aren't nearly as useful as the first 
+    //       group of purchase nodes, etc
     await upgradeLoop(ns);
     ns.spawn("/tools/manageHacknet.js", 1);
  };

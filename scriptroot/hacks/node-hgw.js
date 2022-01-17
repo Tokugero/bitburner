@@ -25,8 +25,8 @@ export async function nodehgw(ns, server, target) {
     const hgwRam = 2;
 
     while (cont) {
-        ns.print(`Starting new loop\n${"-".repeat(80)}`);
         target = ns.getServer(target.hostname);
+        ns.print(`Starting new loop\n${"-".repeat(80)} \n\t$ = ${target.moneyAvailable}/${target.moneyMax} \n\tSecurity = ${target.minDifficulty}/${target.hackDifficulty}`);
         let freeThreads = Math.floor((server.maxRam - server.ramUsed) / hgwRam);
         if (server.hostname == "home") {
             if (server.maxRam < 32) {
@@ -37,8 +37,6 @@ export async function nodehgw(ns, server, target) {
         };
 
         // TODO: Centralize this decision to a single server rather than each node invoking it. 
-        // TODO: Make it suitable for even small hosts to successfully run
-        // TODO: convert to shared processes to parallel run weaken with hack & grow
 
         // Significantly drop security to get it ripe for pickin'
         if (target.hackDifficulty > (target.minDifficulty + 0.05) || server.maxRam < 16) {
@@ -49,7 +47,7 @@ export async function nodehgw(ns, server, target) {
             ns.print(`Max weaken sleeping for ${(minSleep / 1000 / 60)}`);
             await ns.sleep(minSleep + 10000);
 
-            // Start massively increasing money available, run security weakeners in tandem
+        // Start massively increasing money available, run security weakeners in tandem
         } else if (target.moneyAvailable < target.moneyMax * 0.9 && server.maxRam > 16) {
             let growTime = ns.getGrowTime(target.hostname);
             let weakenTime = ns.getWeakenTime(target.hostname);
@@ -67,7 +65,7 @@ export async function nodehgw(ns, server, target) {
             ns.print(`Grow sleeping for ${(minSleep / 1000 / 60)}`);
             await ns.sleep(minSleep + 10000);
 
-            // Do the hacking, run security weakeners in tandem
+        // Do the hacking, run security weakeners in tandem
         } else if (server.maxRam > 16) {
             let hackTime = ns.getHackTime(target.hostname);
             let weakenTime = ns.getWeakenTime(target.hostname);
@@ -84,8 +82,6 @@ export async function nodehgw(ns, server, target) {
             ns.print(`Hack sleeping for ${(minSleep / 1000 / 60)}`);
             await ns.sleep(minSleep + 10000);
 
-        } else {
-            cont = false;
         };
     };
 }

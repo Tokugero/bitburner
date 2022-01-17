@@ -30,7 +30,9 @@ export async function provision(ns, upgradeRam = 8) {
     files = files.concat(ns.ls("home", "/tools/"));
     files = files.concat(ns.ls("home", ".env.js"));
 
-    ns.exec("/tools/provisionFirstNodes.js", "home");
+    if (ns.getPurchasedServers().length < ns.getPurchasedServerLimit){
+        ns.exec("/tools/provisionFirstNodes.js", "home");
+    };
 
     if (upgradeCost < ns.getServerMoneyAvailable("home")) {
         var minRam = 9999999999999;
@@ -48,5 +50,5 @@ export async function provision(ns, upgradeRam = 8) {
 
     for (const server of ns.getPurchasedServers()) {
         await manageServer.copyAndHack(ns, ns.getServer(server), files);
-    }
+    };
 }

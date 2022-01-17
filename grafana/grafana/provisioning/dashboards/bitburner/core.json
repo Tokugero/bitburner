@@ -197,7 +197,7 @@
             },
             "lineInterpolation": "linear",
             "lineWidth": 1,
-            "pointSize": 5,
+            "pointSize": 1,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -384,7 +384,7 @@
           "where": []
         }
       ],
-      "title": "Growing started 5 minute average",
+      "title": "HGW started 1 minute sums",
       "transparent": true,
       "type": "timeseries"
     },
@@ -695,17 +695,10 @@
             "uid": "${DS_POSTGRES}"
           },
           "format": "table",
-          "group": [
-            {
-              "params": [
-                "hostname"
-              ],
-              "type": "column"
-            }
-          ],
+          "group": [],
           "metricColumn": "hostname",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  ram AS \"time\",\n  ram AS \"RAM\",\n  hostname\nFROM boughtservers\nORDER BY 1",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  ram AS \"time\",\n  hostname AS metric,\n  ram\nFROM boughtservers\nORDER BY 1,2",
           "refId": "A",
           "select": [
             [
@@ -742,6 +735,6 @@
   "timezone": "",
   "title": "BitBurner",
   "uid": "BzziIEJ7z",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }
