@@ -1,5 +1,15 @@
 /** @param {import("../../common/.").NS} ns */
 
+/*
+
+The crux of many daemons to get a list of all servers in the purview of the player. All items
+in this list is a full detail object that defines the server, and includes some extra meta-data
+to help other functions. 
+
+Any definitions that should describe the server, should be stored here.
+
+*/
+
 //var allServers = [];
 
 export async function main(ns) {

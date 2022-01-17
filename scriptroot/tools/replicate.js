@@ -1,6 +1,14 @@
 import * as mapServers from './tools/mapServers.js';
 import * as manageServer from './tools/manageServer.js';
 
+/*
+
+This file is responsible for replicating all /tools & /hacks from the home server
+to all servers capable of receiving the files. This includes hackable servers and
+purchasable nodes.
+
+*/
+
 /** @param {import("../common").NS} ns */
 
 export async function main(ns) {

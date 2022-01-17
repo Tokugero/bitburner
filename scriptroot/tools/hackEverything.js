@@ -1,6 +1,12 @@
 import * as mapServers from './tools/mapServers';
 import * as manageServer from './tools/manageServer';
 
+/*
+
+A daemon to continually attempt to take over any hackable node visible to the player.
+
+*/
+
 /** @param {import("../../common/.").NS} ns */
 
 export async function main(ns){

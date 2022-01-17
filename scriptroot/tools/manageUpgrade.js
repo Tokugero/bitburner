@@ -1,3 +1,12 @@
+/*
+
+This is a group of expensive functions that only need to be called when required. 
+
+*/
+
+// TODO: make a main and execute this logic as "exec" rather than calling these directly to save on 
+//       ram usage of the daemon calling these.
+
 /** @param {import("../../common").NS} ns */
 
 export async function upgradeNodes(ns, files, ram) {

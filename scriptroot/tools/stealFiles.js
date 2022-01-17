@@ -1,6 +1,13 @@
 import * as mapServers from './tools/mapServers.js';
 import * as contractHandler from './tools/contractHandler.js';
 
+/*
+
+This Daemon serves to find all interesting files across all servers and either aggregate them 
+to /data/challenges.txt (etc) or to auto-solve challenges it finds. It is currently 
+assumed there is no other interesting files other than light lore and .cct challenges.
+
+*/
 /** @param {import("../../common/.").NS} ns */
 
 export async function main(ns) {

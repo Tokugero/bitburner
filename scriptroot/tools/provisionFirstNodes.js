@@ -1,5 +1,14 @@
 import * as manageServer from './tools/manageServer.js';
 
+/*
+
+This is a quick & dirty method to create the first set of servers in a daemon loop until
+at least this small node group exists to start gathering exp & money.
+
+*/
+
+// TODO: Cover this functionality within the provision.js logic and remove this function entirely.
+
 /** @param {import("../../common").NS} ns */
 
 export async function main(ns){

@@ -1,6 +1,13 @@
 import * as mapServers from 'tools/mapServers.js';
 import * as cloudcompute from 'automation/cloudcompute.js';
 
+/*
+
+A helper script spawnable by the player. Try to exec() functions here rather than call them directly
+to ensure the smallest footprint for interactive play.
+
+*/
+
 /** @param {import("../common").NS} ns */
 
 export async function main(ns) {

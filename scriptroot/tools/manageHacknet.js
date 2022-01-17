@@ -1,7 +1,16 @@
 /** @param {import("../../common/.").NS} ns */
 
-// Manage hacknet servers ns.hacknet.*
-// https://github.com/danielyxie/bitburner/blob/dev/markdown/bitburner.hacknet.md
+/* 
+
+This daemon is the early game money maker, it buys the cheapest hacknet upgrade it can afford at any point in time.
+
+The assumption made here is that, regardless if this is the most efficient upgrade path, it will mostly
+scale with the progress of the rest of the game until the player has purchased sufficiently sized nodes.
+
+Manage hacknet servers ns.hacknet.*
+ https://github.com/danielyxie/bitburner/blob/dev/markdown/bitburner.hacknet.md
+
+ */
 
 export async function main(ns){ 
     await upgradeLoop(ns);

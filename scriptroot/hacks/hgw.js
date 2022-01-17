@@ -1,3 +1,10 @@
+/*
+
+A simple hack/grow/weaken daemon thrown on servers that are capable of hacking themselves, 
+making the assertion that they are not sufficient to help hack anything else.
+
+*/
+
 /** @param {import("../../common").NS} ns */
 
 export async function main(ns) {

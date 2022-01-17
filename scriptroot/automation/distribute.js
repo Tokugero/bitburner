@@ -1,4 +1,9 @@
-// Distribute hacks where server is rooted
+/*
+
+This daemon init process is responsible for any actions involved in 
+rooting boxes and establishing presence in the game.
+
+*/
 
 /** @param {import("../../common").NS} ns */
 

@@ -1,3 +1,11 @@
+/*
+
+These functions are intended to be called for anything that involves interacting or
+making a decision about an un-hackable server. This implies that these are functions
+called to manage the manageable cluster and isn't hacking themselves.
+
+*/
+
 /** @param {import("../../common").NS} ns */
 
 export async function copyAndHack(ns, server, files) {

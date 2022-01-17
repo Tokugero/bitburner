@@ -1,6 +1,13 @@
 import * as manageUpgrade from './tools/manageUpgrade.js';
 import * as manageServer from './tools/manageServer.js';
 
+/*
+
+This function is responsible for upgrading the purchasable nodes. Mid to late runs
+this will be the function that generates the majority of income.
+
+*/
+
 /** @param {import("../../common").NS} ns */
 
 export async function main(ns){

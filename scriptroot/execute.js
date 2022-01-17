@@ -2,6 +2,17 @@ import * as cloudcompute from 'automation/cloudcompute.js';
 import * as distribute from 'automation/distribute.js';
 import * as hacknetManager from 'automation/hacknet.js';
 
+/* 
+
+This is the main entrypoint for all automation. It's purpose is, and will eventually
+be the key to coordinating all resources and batch hacks. 
+
+This should only ever link to automation and math helper libraries for calculating what 
+to do and is intended to be a one-time run & die daemon init to spawn the worker daemons.
+
+Potentially in the future there may be a watcher daemon to pass status between services.
+
+*/
 
 /** @param {import("../common").NS} ns */
 
@@ -23,7 +34,7 @@ export async function main(ns) {
     await cloudcompute.provision(ns, 8);
     ns.tprint("Purchasing first servers.");
     await ns.sleep(5000); 
-    
+
     //start hacknet
     await hacknetManager.startBuying(ns);
     ns.tprint("Initializing hacknet manager.");

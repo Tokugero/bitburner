@@ -1,5 +1,13 @@
 import * as mapServers from './tools/mapServers.js';
 
+/*
+
+This daemon is spawned on every node that isn't hacking itself. It should call a function
+or check a control file to make a decision on where to hack/grow/weaken next and at what
+depth.
+
+*/
+
 /** @param {import("../../common").NS} ns */
 
 export async function main(ns) {

@@ -1,5 +1,12 @@
 import * as arrayJumpingGame from './tools/contractTypes/arrayJumpingGame.js';
 
+/*
+
+This is called any time a new contract is found. As new /tools/contractTypes are validated,
+add them to this list to let the /tools/stealFiles daemon auto-break them.
+
+*/
+
 /** @param {import("../../common/.").NS} ns */
 
 export async function main(ns){
