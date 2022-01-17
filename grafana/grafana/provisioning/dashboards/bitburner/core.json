@@ -40,6 +40,12 @@
       "id": "stat",
       "name": "Stat",
       "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
     }
   ],
   "annotations": {
@@ -69,6 +75,114 @@
   "liveNow": false,
   "panels": [
     {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 16,
+        "x": 0,
+        "y": 0
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_POSTGRES}"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  time AS \"time\",\n  money\nFROM money\nWHERE\n  $__timeFilter(time)\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "money"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "money",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Player Money",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -82,10 +196,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -96,7 +206,7 @@
         "h": 5,
         "w": 5,
         "x": 0,
-        "y": 0
+        "y": 6
       },
       "id": 2,
       "options": {
@@ -132,7 +242,7 @@
           ],
           "metricColumn": "none",
           "rawQuery": false,
-          "rawSql": "SELECT\n  $__timeGroupAlias(time,1m,0),\n  sum(growing) AS \"growing\"\nFROM stats\nWHERE\n  $__timeFilter(time)\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroupAlias(time,1m,0),\n  sum(growing) AS \"growing\"\nFROM stats\nGROUP BY 1\nORDER BY 1",
           "refId": "A",
           "select": [
             [
@@ -159,13 +269,7 @@
           "table": "stats",
           "timeColumn": "time",
           "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          "where": []
         }
       ],
       "title": "Growing started 5 minute average",
@@ -200,7 +304,7 @@
         "h": 5,
         "w": 5,
         "x": 5,
-        "y": 0
+        "y": 6
       },
       "id": 3,
       "options": {
@@ -236,7 +340,7 @@
           ],
           "metricColumn": "none",
           "rawQuery": false,
-          "rawSql": "SELECT\n  $__timeGroupAlias(time,1m,0),\n  sum(weakening) AS \"growing\"\nFROM stats\nWHERE\n  $__timeFilter(time)\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroupAlias(time,1m,0),\n  sum(weakening) AS \"weakening\"\nFROM stats\nGROUP BY 1\nORDER BY 1",
           "refId": "A",
           "select": [
             [
@@ -254,7 +358,7 @@
               },
               {
                 "params": [
-                  "growing"
+                  "weakening"
                 ],
                 "type": "alias"
               }
@@ -263,13 +367,7 @@
           "table": "stats",
           "timeColumn": "time",
           "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          "where": []
         }
       ],
       "title": "Weakening started 5 minute average",
@@ -304,7 +402,7 @@
         "h": 5,
         "w": 5,
         "x": 11,
-        "y": 0
+        "y": 6
       },
       "id": 4,
       "options": {
@@ -340,7 +438,7 @@
           ],
           "metricColumn": "none",
           "rawQuery": false,
-          "rawSql": "SELECT\n  $__timeGroupAlias(time,1m,0),\n  sum(hacking) AS \"growing\"\nFROM stats\nWHERE\n  $__timeFilter(time)\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroupAlias(time,1m,0),\n  sum(hacking) AS \"hacking\"\nFROM stats\nGROUP BY 1\nORDER BY 1",
           "refId": "A",
           "select": [
             [
@@ -358,7 +456,7 @@
               },
               {
                 "params": [
-                  "growing"
+                  "hacking"
                 ],
                 "type": "alias"
               }
@@ -367,109 +465,12 @@
           "table": "stats",
           "timeColumn": "time",
           "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          "where": []
         }
       ],
       "title": "Hacking started 5 minute average",
       "transparent": true,
       "type": "stat"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 19,
-        "w": 6,
-        "x": 17,
-        "y": 0
-      },
-      "id": 9,
-      "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true
-      },
-      "pluginVersion": "8.3.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "${DS_POSTGRES}"
-          },
-          "format": "time_series",
-          "group": [
-            {
-              "params": [
-                "hostname"
-              ],
-              "type": "column"
-            }
-          ],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  time AS \"time\",\n  max(ram) AS \"ram\"\nFROM boughtservers\nGROUP BY hostname\nORDER BY 1",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "ram"
-                ],
-                "type": "column"
-              },
-              {
-                "params": [
-                  "max"
-                ],
-                "type": "aggregate"
-              },
-              {
-                "params": [
-                  "ram"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "table": "boughtservers",
-          "timeColumn": "time",
-          "where": []
-        }
-      ],
-      "type": "bargauge"
     },
     {
       "fieldConfig": {
@@ -492,7 +493,7 @@
         "h": 6,
         "w": 3,
         "x": 0,
-        "y": 5
+        "y": 11
       },
       "id": 6,
       "options": {
@@ -612,7 +613,7 @@
         "h": 6,
         "w": 3,
         "x": 3,
-        "y": 5
+        "y": 11
       },
       "id": 7,
       "options": {
@@ -724,25 +725,26 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
-          },
-          "unit": "currencyUSD"
+          }
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 3,
+        "h": 6,
+        "w": 10,
         "x": 6,
-        "y": 5
+        "y": 11
       },
-      "id": 11,
+      "id": 9,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
+        "displayMode": "gradient",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -750,7 +752,7 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showUnfilled": true
       },
       "pluginVersion": "8.3.3",
       "targets": [
@@ -763,21 +765,20 @@
           "group": [
             {
               "params": [
-                "$__interval",
-                "none"
+                "hostname"
               ],
-              "type": "time"
+              "type": "column"
             }
           ],
           "metricColumn": "none",
           "rawQuery": false,
-          "rawSql": "SELECT\n  $__timeGroupAlias(time,$__interval),\n  max(money) AS \"money\"\nFROM money\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  time AS \"time\",\n  max(ram) AS \"ram\"\nFROM boughtservers\nGROUP BY hostname\nORDER BY 1",
           "refId": "A",
           "select": [
             [
               {
                 "params": [
-                  "money"
+                  "ram"
                 ],
                 "type": "column"
               },
@@ -789,21 +790,18 @@
               },
               {
                 "params": [
-                  "money"
+                  "ram"
                 ],
                 "type": "alias"
               }
             ]
           ],
-          "table": "money",
+          "table": "boughtservers",
           "timeColumn": "time",
-          "timeColumnType": "timestamp",
           "where": []
         }
       ],
-      "title": "Player Money",
-      "transparent": true,
-      "type": "stat"
+      "type": "bargauge"
     }
   ],
   "refresh": "5s",
@@ -814,13 +812,13 @@
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "BitBurner",
   "uid": "BzziIEJ7z",
-  "version": 1,
+  "version": 3,
   "weekStart": ""
 }

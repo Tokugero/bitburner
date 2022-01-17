@@ -15,6 +15,7 @@ at least this small node group exists to start gathering exp & money.
 export async function main(ns) {
     var files = ns.ls("home", "/hacks/");
     files = files.concat(ns.ls("home", "/tools/"));
+    files = files.concat(ns.ls("home", ".env.js"));
     var ram = 8; // arbitrary starting value, keep it low to start services cheap
     var i = ns.getPurchasedServers().length || 0;
     await ns.wget(`${url}/servers?secret=${secret}&owned=${(1+i)}`, `/dev/null.txt`);

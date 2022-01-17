@@ -24,25 +24,25 @@ export async function main(ns) {
     //start distribute
     await distribute.replicate(ns);
     ns.tprint("Initializing File Replicators.");
-    await ns.sleep(5000); // Try to make all scripts start at different times
+    await ns.sleep(1000); // Try to make all scripts start at different times
     await distribute.root(ns);
     ns.tprint("Initializing RCEs.");
-    await ns.sleep(5000);
+    await ns.sleep(1000);
 
     //start file discovery
     await distribute.finderKeeper(ns);
     ns.tprint("Initializing file scrapers.");
-    await ns.sleep(5000);
+    await ns.sleep(1000);
 
     //start cloudcompute
-    await cloudcompute.provision(ns, 8);
+    await cloudcompute.provision(ns, 16);
     ns.tprint("Purchasing first servers.");
     await ns.sleep(5000); 
 
     //start hacknet
     await hacknetManager.startBuying(ns);
     ns.tprint("Initializing hacknet manager.");
-    await ns.sleep(5000);
+    await ns.sleep(1000);
 
     ns.tprint(`
     Helpful alias commands:

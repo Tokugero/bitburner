@@ -37,7 +37,8 @@ export async function replicate(ns) {
 export async function hack(ns) {
     var allServers = await mapServers.getAllServers(ns);
     for (const server of allServers) {
-        if (server.hostname.indexOf("node-") == -1 ) {
+        // Adding shim of 16 gig minimum ram to prevent servers from having to split their resources.
+        if (server.hostname.indexOf("node-") == -1 && server.maxRam > 16) {
             if (server.hasAdminRights) {
                 
                 ns.killall(server.hostname);
