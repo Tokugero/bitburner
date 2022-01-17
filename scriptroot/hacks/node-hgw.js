@@ -83,7 +83,7 @@ export async function nodehgw(ns, server, target) {
             await ns.sleep(minSleep + 10000);
 
         } else {
-            cont = false;
+            await ns.sleep(100); // to prevent too aggressive loops from small hosts.
         };
     };
 }
