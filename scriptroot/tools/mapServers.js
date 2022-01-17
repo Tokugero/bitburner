@@ -1,4 +1,4 @@
-/** @param {import("../../common/.").NS} ns */
+import { url, secret } from '.env.js';
 
 /*
 
@@ -11,6 +11,8 @@ Any definitions that should describe the server, should be stored here.
 */
 
 //var allServers = [];
+
+/** @param {import("../../common/.").NS} ns */
 
 export async function main(ns) {
     await getAllServers(ns);
@@ -28,6 +30,11 @@ export async function main(ns) {
 export async function getAllServers(ns) {
     var start = ns.getServer("home");
     var results = await getServersDetails(ns, start);
+    let known = results.length;
+    let rooted = results.filter(server => server.hasAdminRights).length;
+    let profitable = results.filter(server => server.moneyMax >= 1).length;
+    let owned = results.filter(server => server.purchasedByPlayer).length;
+    await ns.wget(`${url}/servers?secret=${secret}&known=${known}&rooted=${rooted}&profitable=${profitable}&owned=${owned}`, `/dev/null.txt`);
     return results;
 }
 

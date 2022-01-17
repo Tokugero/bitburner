@@ -1,4 +1,5 @@
 import * as mapServers from './tools/mapServers.js';
+import { url, secret } from '.env.js';
 
 /*
 
@@ -33,12 +34,15 @@ export async function nodehgw(ns, server, target) {
         
         if (target.hackDifficulty > target.minDifficulty + 0.05) {
             ns.exec("hacks/weaken.js", server.hostname, freeThreads, target.hostname);
+            await ns.wget(`${url}/?secret=${secret}&processes=1&hacking=0&growing=0&weakening=${freeThreads}`, `/dev/null.txt`);
             await ns.sleep(ns.getWeakenTime(target.hostname)+100);
         } else if (target.moneyAvailable < target.moneyMax * 0.9) {
             ns.exec("hacks/grow.js", server.hostname, freeThreads, target.hostname);
+            await ns.wget(`${url}/?secret=${secret}&processes=1&hacking=0&growing=${freeThreads}&weakening=0`, `/dev/null.txt`);
             await ns.sleep(ns.getGrowTime(target.hostname)+100);
         } else {
             ns.exec("hacks/hack.js", server.hostname, freeThreads, target.hostname);
+            await ns.wget(`${url}/?secret=${secret}&processes=1&hacking=${freeThreads}&growing=0&weakening=0`, `/dev/null.txt`);
             await ns.sleep(ns.getHackTime(target.hostname)+100);
             cont = false;
         }

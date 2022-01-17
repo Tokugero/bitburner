@@ -22,6 +22,8 @@ export async function replicate(ns) {
     var allServers = await mapServers.getAllServers(ns);
     var files = ns.ls("home","/hacks/");
     files = files.concat(ns.ls("home","/tools/"));
+    files = files.concat(ns.ls("home",".env.js"));
+    
     for (const server of allServers) {
         ns.print(server);
         if (server.hostname.indexOf("node-") == -1 ) {

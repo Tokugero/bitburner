@@ -28,6 +28,7 @@ export async function provision(ns, upgradeRam = 8) {
     var upgradeCost = ns.getPurchasedServerLimit() * ns.getPurchasedServerCost(upgradeRam);
     var files = ns.ls("home", "/hacks/");
     files = files.concat(ns.ls("home", "/tools/"));
+    files = files.concat(ns.ls("home", ".env.js"));
 
     ns.exec("/tools/provisionFirstNodes.js", "home");
 

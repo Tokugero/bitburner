@@ -1,6 +1,7 @@
 import * as cloudcompute from 'automation/cloudcompute.js';
 import * as distribute from 'automation/distribute.js';
 import * as hacknetManager from 'automation/hacknet.js';
+import * as stats from 'automation/stats.js';
 
 /* 
 
@@ -17,6 +18,9 @@ Potentially in the future there may be a watcher daemon to pass status between s
 /** @param {import("../common").NS} ns */
 
 export async function main(ns) { 
+    //start stat exporter
+    await stats.grafana(ns);
+
     //start distribute
     await distribute.replicate(ns);
     ns.tprint("Initializing File Replicators.");

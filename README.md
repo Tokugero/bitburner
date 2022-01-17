@@ -11,6 +11,8 @@ Please do not take this as valid JavaScript, nor any attempt to actually hack an
 1. Install the bitburner addon in VSCode.
 1. Establish the .vscode/settings.json as implied in this repo
 1. Grab the API token from the Steam game itself to populate the settings.json
+1. Copy & edit ./grafana/.env.example & ./.env.js.example to replace keys
+1. Browse to ./grafana/ and run `docker-compose up -d` [instructions](grafana/README.md)
 1. Go wild.
 
 ## Notes

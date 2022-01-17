@@ -1,0 +1,39 @@
+services:
+  bb-api:
+    build: ./bitburner-grafana # https://github.com/oatmealine/bitburner-grafana
+    environment:
+      DB_HOST: postgres
+      DB_NAME: bitburner
+      DB_PASS: ${POSTGRES_PASSWORD}
+      DB_PORT: "5432"
+      DB_USER: bitburner
+      PORT: "5252"
+      SECRET: ${BB_API_SECRET} # Defined in .env
+    ports:
+      - 5252:5252
+    depends_on: 
+      - postgres
+
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  postgres:
+    image: postgres:11.14-stretch
+    volumes:
+      - postgres:/var/lib/postgresql/data/pgdata
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_DB: bitburner
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Defined in .env
+      POSTGRES_USER: bitburner
+
+volumes:
+  grafana:
+  postgres:
