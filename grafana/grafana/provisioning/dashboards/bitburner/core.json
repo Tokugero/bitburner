@@ -13,8 +13,8 @@
   "__requires": [
     {
       "type": "panel",
-      "id": "bargauge",
-      "name": "Bar gauge",
+      "id": "barchart",
+      "name": "Bar chart",
       "version": ""
     },
     {
@@ -34,12 +34,6 @@
       "id": "postgres",
       "name": "PostgreSQL",
       "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
     },
     {
       "type": "panel",
@@ -187,7 +181,35 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -204,24 +226,20 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
+        "w": 16,
         "x": 0,
         "y": 6
       },
       "id": 2,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
         },
-        "textMode": "auto"
+        "tooltip": {
+          "mode": "single"
+        }
       },
       "pluginVersion": "8.3.3",
       "targets": [
@@ -270,207 +288,105 @@
           "timeColumn": "time",
           "timeColumnType": "timestamp",
           "where": []
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_POSTGRES}"
+          },
+          "format": "time_series",
+          "group": [
+            {
+              "params": [
+                "1m",
+                "0"
+              ],
+              "type": "time"
+            }
+          ],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  $__timeGroupAlias(time,1m,0),\n  sum(hacking) AS \"hacking\"\nFROM stats\nGROUP BY 1\nORDER BY 1",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "hacking"
+                ],
+                "type": "column"
+              },
+              {
+                "params": [
+                  "sum"
+                ],
+                "type": "aggregate"
+              },
+              {
+                "params": [
+                  "hacking"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "stats",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": []
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_POSTGRES}"
+          },
+          "format": "time_series",
+          "group": [
+            {
+              "params": [
+                "1m",
+                "0"
+              ],
+              "type": "time"
+            }
+          ],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  $__timeGroupAlias(time,1m,0),\n  sum(weakening) AS \"weakening\"\nFROM stats\nGROUP BY 1\nORDER BY 1",
+          "refId": "C",
+          "select": [
+            [
+              {
+                "params": [
+                  "weakening"
+                ],
+                "type": "column"
+              },
+              {
+                "params": [
+                  "sum"
+                ],
+                "type": "aggregate"
+              },
+              {
+                "params": [
+                  "weakening"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "stats",
+          "timeColumn": "time",
+          "timeColumnType": "timestamp",
+          "where": []
         }
       ],
       "title": "Growing started 5 minute average",
       "transparent": true,
-      "type": "stat"
-    },
-    {
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 5,
-        "y": 6
-      },
-      "id": 3,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.3.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "${DS_POSTGRES}"
-          },
-          "format": "time_series",
-          "group": [
-            {
-              "params": [
-                "1m",
-                "0"
-              ],
-              "type": "time"
-            }
-          ],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  $__timeGroupAlias(time,1m,0),\n  sum(weakening) AS \"weakening\"\nFROM stats\nGROUP BY 1\nORDER BY 1",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "weakening"
-                ],
-                "type": "column"
-              },
-              {
-                "params": [
-                  "sum"
-                ],
-                "type": "aggregate"
-              },
-              {
-                "params": [
-                  "weakening"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "table": "stats",
-          "timeColumn": "time",
-          "timeColumnType": "timestamp",
-          "where": []
-        }
-      ],
-      "title": "Weakening started 5 minute average",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 11,
-        "y": 6
-      },
-      "id": 4,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.3.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "postgres",
-            "uid": "${DS_POSTGRES}"
-          },
-          "format": "time_series",
-          "group": [
-            {
-              "params": [
-                "1m",
-                "0"
-              ],
-              "type": "time"
-            }
-          ],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  $__timeGroupAlias(time,1m,0),\n  sum(hacking) AS \"hacking\"\nFROM stats\nGROUP BY 1\nORDER BY 1",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "hacking"
-                ],
-                "type": "column"
-              },
-              {
-                "params": [
-                  "sum"
-                ],
-                "type": "aggregate"
-              },
-              {
-                "params": [
-                  "hacking"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "table": "stats",
-          "timeColumn": "time",
-          "timeColumnType": "timestamp",
-          "where": []
-        }
-      ],
-      "title": "Hacking started 5 minute average",
-      "transparent": true,
-      "type": "stat"
+      "type": "timeseries"
     },
     {
       "fieldConfig": {
@@ -718,6 +634,19 @@
           "color": {
             "mode": "thresholds"
           },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -743,16 +672,20 @@
       },
       "id": 9,
       "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
         },
-        "showUnfilled": true
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single"
+        },
+        "xTickLabelRotation": 90
       },
       "pluginVersion": "8.3.3",
       "targets": [
@@ -761,7 +694,7 @@
             "type": "postgres",
             "uid": "${DS_POSTGRES}"
           },
-          "format": "time_series",
+          "format": "table",
           "group": [
             {
               "params": [
@@ -770,9 +703,9 @@
               "type": "column"
             }
           ],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  time AS \"time\",\n  max(ram) AS \"ram\"\nFROM boughtservers\nGROUP BY hostname\nORDER BY 1",
+          "metricColumn": "hostname",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  ram AS \"time\",\n  ram AS \"RAM\",\n  hostname\nFROM boughtservers\nORDER BY 1",
           "refId": "A",
           "select": [
             [
@@ -781,27 +714,17 @@
                   "ram"
                 ],
                 "type": "column"
-              },
-              {
-                "params": [
-                  "max"
-                ],
-                "type": "aggregate"
-              },
-              {
-                "params": [
-                  "ram"
-                ],
-                "type": "alias"
               }
             ]
           ],
           "table": "boughtservers",
-          "timeColumn": "time",
+          "timeColumn": "ram",
+          "timeColumnType": "int4",
           "where": []
         }
       ],
-      "type": "bargauge"
+      "transparent": true,
+      "type": "barchart"
     }
   ],
   "refresh": "5s",
@@ -812,13 +735,13 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "BitBurner",
   "uid": "BzziIEJ7z",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
