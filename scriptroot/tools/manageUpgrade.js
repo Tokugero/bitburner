@@ -1,4 +1,5 @@
 import { url, secret } from '.env.js';
+import * as manageServer from './tools/manageServer.js';
 
 /*
 
@@ -36,7 +37,7 @@ export async function upgradeNode(ns, ram, server, files) {
             server = ns.purchaseServer(`${ram}-node`, ram);
             await ns.wget(`${url}/boughtserver?secret=${secret}&hostname=${server}&ram=${ram}`, `/dev/null.txt`);
             await ns.sleep(20);
-            await copyAndHack(ns, ns.getServer(server), files);
+            await manageServer.copyAndHack(ns, ns.getServer(server), files);
         } else {
             await ns.sleep(600000);
         };
