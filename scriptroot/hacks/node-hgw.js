@@ -82,6 +82,8 @@ export async function nodehgw(ns, server, target) {
             ns.print(`Hack sleeping for ${(minSleep / 1000 / 60)}`);
             await ns.sleep(minSleep + 10000);
 
+        } else {
+            cont = false;
         };
     };
 }
