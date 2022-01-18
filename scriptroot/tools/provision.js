@@ -17,7 +17,7 @@ export async function main(ns){
 
 /** @param {import("../../common").NS} ns */
 
-export async function provision(ns, upgradeRam = 8) {
+export async function provision(ns, upgradeRam = 16) {
     /**
      * 8 = ~14m
      * 16 = ~21m
