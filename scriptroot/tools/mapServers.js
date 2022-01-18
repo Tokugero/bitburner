@@ -46,7 +46,6 @@ async function getServersDetails(ns, parentNode, origin = parentNode, trail = []
             var serverDetails = ns.getServer(server);
             serverDetails.files = files;
             serverDetails.trail = trail;
-            await ns.wget(`${url}server=${serverDetails.hostname}&maxRam=${serverDetails.maxRam}&usedRam=${serverDetails.ramUsed}&cpu=${serverDetails.cpuCores}&moneyMax=${serverDetails.moneyMax}&moneyAvail=${serverDetails.moneyAvailable}&hacked=${(serverDetails.hasAdminRights ? 1 : 0)}&owned=${(serverDetails.purchasedByPlayer ? 1 : 0)}`, `/dev/null.txt`);
 
             branch.push(serverDetails);
             branch = branch.concat(await getServersDetails(ns, serverDetails, parentNode, trail)); 

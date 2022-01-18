@@ -47,10 +47,10 @@ export async function nodehgw(ns, server, target) {
 
             ns.print(`${target.hostname} currently at ${target.hackDifficulty} difficulty (min is ${target.minDifficulty})`);
             ns.exec("hacks/weaken.js", server.hostname, freeThreads, target.hostname);
-            await ns.wget(`${url}hgw=weaken&weakening=${freeThreads}`, `/dev/null.txt`);
+            await ns.wget(`${url}hgw=weaken&weakening=${freeThreads}&server=${server.hostname}`, `/dev/null.txt`);
             ns.print(`Max weaken sleeping for ${(minSleep / 1000 / 60)}`);
             await ns.sleep(minSleep + 10000);
-            await ns.wget(`${url}hgw=weaken&weakening=-${freeThreads}`, `/dev/null.txt`);
+            await ns.wget(`${url}hgw=weaken&weakening=-${freeThreads}&server=${server.hostname}`, `/dev/null.txt`);
 
             // Start massively increasing money available, run security weakeners in tandem
         } else if (target.moneyAvailable < target.moneyMax * 0.9 && server.maxRam > 16) {
@@ -63,16 +63,16 @@ export async function nodehgw(ns, server, target) {
 
             ns.print(`${target.hostname} currently at ${target.moneyAvailable} money (max is ${target.moneyMax})`);
             ns.exec("hacks/grow.js", server.hostname, effectThreads, target.hostname);
-            await ns.wget(`${url}hgw=grow&growing=${effectThreads}`, `/dev/null.txt`);
+            await ns.wget(`${url}hgw=grow&growing=${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
             // Offset the script runtime so that weaken finishes immediately after
             await ns.sleep(maxSleep - minSleep + 1000);
-            await ns.wget(`${url}hgw=grow&growing=-${effectThreads}`, `/dev/null.txt`);
+            await ns.wget(`${url}hgw=grow&growing=-${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
 
             ns.exec("hacks/weaken.js", server.hostname, weakenThreads, target.hostname);
-            await ns.wget(`${url}hgw=weaken&weakening=${weakenThreads}`, `/dev/null.txt`);
+            await ns.wget(`${url}hgw=weaken&weakening=${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
             ns.print(`Grow sleeping for ${(minSleep / 1000 / 60)}`);
             await ns.sleep(minSleep + 10000);
-            await ns.wget(`${url}hgw=weaken&weakening=-${weakenThreads}`, `/dev/null.txt`);
+            await ns.wget(`${url}hgw=weaken&weakening=-${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
 
             // Do the hacking, run security weakeners in tandem
         } else if (server.maxRam > 16) {
@@ -84,16 +84,16 @@ export async function nodehgw(ns, server, target) {
             let weakenThreads = Math.ceil(freeThreads * .1);
 
             ns.exec("hacks/hack.js", server.hostname, effectThreads, target.hostname);
-            await ns.wget(`${url}hgw=hack&hacking=${effectThreads}`, `/dev/null.txt`);
+            await ns.wget(`${url}hgw=hack&hacking=${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
             // Offset the script runtime so that weaken finishes immediately after
             await ns.sleep(maxSleep - minSleep + 1000);
-            await ns.wget(`${url}hgw=hack&hacking=-${effectThreads}`, `/dev/null.txt`);
+            await ns.wget(`${url}hgw=hack&hacking=-${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
 
             ns.exec("hacks/weaken.js", server.hostname, weakenThreads, target.hostname);
-            await ns.wget(`${url}hgw=weaken&weakening=${weakenThreads}`, `/dev/null.txt`);
+            await ns.wget(`${url}hgw=weaken&weakening=${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
             ns.print(`Hack sleeping for ${(minSleep / 1000 / 60)}`);
             await ns.sleep(minSleep + 10000);
-            await ns.wget(`${url}hgw=weaken&weakening=-${weakenThreads}`, `/dev/null.txt`);
+            await ns.wget(`${url}hgw=weaken&weakening=-${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
 
         } else {
             await ns.sleep(100); // to prevent too aggressive loops from small hosts.

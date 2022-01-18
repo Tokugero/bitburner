@@ -241,7 +241,7 @@
               "mode": "off"
             }
           },
-          "displayName": "${__field.name}",
+          "displayName": "${__field.labels.server}: ${__field.labels.hgw}",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -449,6 +449,6 @@
   "timezone": "",
   "title": "BitBurner",
   "uid": "xLXhoUJnz",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }

@@ -20,6 +20,7 @@ Potentially in the future there may be a watcher daemon to pass status between s
 export async function main(ns) { 
     //start stat exporter
     await stats.grafana(ns);
+    ns.tprint("Initializing monitoring.");
 
     //start distribute
     await distribute.replicate(ns);
