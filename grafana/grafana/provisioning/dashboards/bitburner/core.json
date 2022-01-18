@@ -176,7 +176,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 47,
+        "h": 21,
         "w": 11,
         "x": 13,
         "y": 0
@@ -208,90 +208,6 @@
       "title": "Hacked Servers",
       "transparent": true,
       "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_TELEGRAF}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "displayName": "${__field.labels.server}: ${__field.labels.hgw}",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 13,
-        "x": 0,
-        "y": 8
-      },
-      "id": 3,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_TELEGRAF}"
-          },
-          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    r.hgw == \"weaken\" or r.hgw == \"grow\" or r.hgw == \"hack\"\r\n  )\r\n  |> aggregateWindow(every: 1s, fn: sum)\r\n  |> cumulativeSum()",
-          "refId": "A"
-        }
-      ],
-      "title": "HGW running statistics",
-      "transparent": true,
-      "type": "timeseries"
     },
     {
       "datasource": {
@@ -386,7 +302,7 @@
         "h": 8,
         "w": 13,
         "x": 0,
-        "y": 16
+        "y": 8
       },
       "id": 4,
       "options": {
@@ -410,6 +326,89 @@
         }
       ],
       "title": "Target Server",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_TELEGRAF}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 13,
+        "x": 0,
+        "y": 16
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_TELEGRAF}"
+          },
+          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) => exists r.hgw)\r\n  |> drop(columns: [\"server\"])\r\n  |> aggregateWindow(every: 1m, fn: sum)\r\n  |> cumulativeSum()",
+          "refId": "A"
+        }
+      ],
+      "title": "HGW running statistics",
       "transparent": true,
       "type": "timeseries"
     },
@@ -452,9 +451,9 @@
       },
       "gridPos": {
         "h": 23,
-        "w": 13,
-        "x": 0,
-        "y": 24
+        "w": 11,
+        "x": 13,
+        "y": 21
       },
       "id": 6,
       "options": {
@@ -489,7 +488,7 @@
       "type": "barchart"
     }
   ],
-  "refresh": "5s",
+  "refresh": "30s",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],
@@ -497,13 +496,13 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "BitBurner",
   "uid": "xLXhoUJnz",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }
