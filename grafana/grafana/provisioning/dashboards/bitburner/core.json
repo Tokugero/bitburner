@@ -13,6 +13,12 @@
   "__requires": [
     {
       "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
       "id": "bargauge",
       "name": "Bar gauge",
       "version": ""
@@ -384,6 +390,19 @@
           "color": {
             "mode": "continuous-GrYlRd"
           },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "fillOpacity": 49,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
           "mappings": [],
           "max": 100,
           "thresholds": {
@@ -406,17 +425,20 @@
       },
       "id": 6,
       "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "limit": 150,
-          "values": true
+        "barWidth": 0.47,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
         },
-        "showUnfilled": true
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single"
+        },
+        "xTickLabelRotation": 0
       },
       "pluginVersion": "8.3.3",
       "targets": [
@@ -431,7 +453,7 @@
       ],
       "title": "Owned Servers",
       "transparent": true,
-      "type": "bargauge"
+      "type": "barchart"
     }
   ],
   "refresh": "5s",
@@ -442,13 +464,13 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "BitBurner",
   "uid": "xLXhoUJnz",
-  "version": 5,
+  "version": 6,
   "weekStart": ""
 }
