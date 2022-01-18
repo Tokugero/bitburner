@@ -1,4 +1,4 @@
-import { url, secret } from '.env.js';
+import { url } from '.env.js';
 
 /*
 
@@ -10,6 +10,6 @@ Manage statistics that need to regularly be sent to grafana.
 
 export async function main(ns){
     let playerMoney = ns.getServerMoneyAvailable("home");
-    await ns.wget(`${url}/money?secret=${secret}&money=${playerMoney}`, `/dev/null.txt`);
+    await ns.wget(`${url}player=1&money=${playerMoney}`, `/dev/null.txt`);
     ns.spawn("tools/grafana.js");
 };

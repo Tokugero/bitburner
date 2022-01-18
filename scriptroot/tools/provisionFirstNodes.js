@@ -1,5 +1,5 @@
 import * as manageServer from './tools/manageServer.js';
-import { url, secret } from '.env.js';
+import { url } from '.env.js';
 
 /*
 
@@ -19,13 +19,12 @@ export async function main(ns) {
 
     var ram = 16; // arbitrary starting value, keep it low to start services cheap. Anything lower than 16 isn't worth it right now
     var i = ns.getPurchasedServers().length || 0;
-    await ns.wget(`${url}/servers?secret=${secret}&owned=${(1+i)}`, `/dev/null.txt`);
 
     // Initialize first server purchase
     while (i < ns.getPurchasedServerLimit()) {
         if (ns.getServerMoneyAvailable("home") > ns.getPurchasedServerCost(ram)) {
             var hostname = ns.purchaseServer(`${ram}-node`, ram);
-            await ns.wget(`${url}/boughtserver?secret=${secret}&hostname=${hostname}&ram=${ram}`, `/dev/null.txt`);
+            await ns.wget(`${url}boughtserver=add&server=${hostname}&ram=${ram}`, `/dev/null.txt`);
             await manageServer.copyAndHack(ns, ns.getServer(hostname), files);
             i++;
         } else {
