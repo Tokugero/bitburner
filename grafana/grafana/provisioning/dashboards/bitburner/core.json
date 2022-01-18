@@ -12,6 +12,12 @@
   "__elements": [],
   "__requires": [
     {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
@@ -22,12 +28,6 @@
       "id": "influxdb",
       "name": "InfluxDB",
       "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
     },
     {
       "type": "panel",
@@ -153,23 +153,16 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto"
+            "mode": "continuous-GrYlRd"
           },
           "mappings": [],
+          "max": 100,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -177,21 +170,23 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 23,
+        "h": 47,
         "w": 11,
         "x": 13,
         "y": 0
       },
       "id": 5,
       "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
           ],
-          "show": false
+          "fields": "",
+          "values": true
         },
-        "showHeader": true
+        "showUnfilled": true
       },
       "pluginVersion": "8.3.3",
       "targets": [
@@ -200,13 +195,13 @@
             "type": "influxdb",
             "uid": "${DS_TELEGRAF}"
           },
-          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"hacked\" and\r\n    r._value == 1\r\n  )\r\n  |> group()\r\n  |> unique(column: \"server\")\r\n  |> drop(columns: [\"_field\", \"_measurement\", \"host\", \"_time\", \"_value\"])\r\n  |> sort(columns: [\"_value\"])\r\n",
+          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) => r._field =~ /owned|hacked|usedRam|maxRam/)\r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> filter(fn: (r) => r.owned == 0 and r.hacked == 1)\r\n  |> group()\r\n  |> unique(column: \"server\")\r\n  |> map(fn: (r) => ({ server: r.server, usedPercent: float(v: r.usedRam) / float(v: r.maxRam) * 100.0}))\r\n  |> drop(columns: [\"_field\", \"_measurement\", \"host\", \"_time\", \"_value\", \"_start\", \"_stop\", \"hacked\", \"owned\"])\r\n  |> sort(columns: [\"usedRam\"], desc: true)\r\n",
           "refId": "A"
         }
       ],
       "title": "Hacked Servers",
       "transparent": true,
-      "type": "table"
+      "type": "bargauge"
     },
     {
       "datasource": {
@@ -284,7 +279,7 @@
             "type": "influxdb",
             "uid": "${DS_TELEGRAF}"
           },
-          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    r.hgw == \"weaken\" or r.hgw == \"grow\" or r.hgw == \"hacking\"\r\n  )\r\n  |> aggregateWindow(every: 1s, fn: sum)\r\n  |> cumulativeSum()",
+          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    r.hgw == \"weaken\" or r.hgw == \"grow\" or r.hgw == \"hack\"\r\n  )\r\n  |> aggregateWindow(every: 1s, fn: sum)\r\n  |> cumulativeSum()",
           "refId": "A"
         }
       ],
@@ -378,8 +373,68 @@
       "title": "Target Server",
       "transparent": true,
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_TELEGRAF}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 23,
+        "w": 13,
+        "x": 0,
+        "y": 24
+      },
+      "id": 6,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "limit": 150,
+          "values": true
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_TELEGRAF}"
+          },
+          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) => r._field =~ /owned|hacked|usedRam|maxRam/)\r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> filter(fn: (r) => r.owned == 1 and r.hacked == 1)\r\n  |> group()\r\n  |> unique(column: \"server\")\r\n  |> map(fn: (r) => ({ server: r.server, usedPercent: float(v: r.usedRam) / float(v: r.maxRam) * 100.0}))\r\n  |> drop(columns: [\"_field\", \"_measurement\", \"host\", \"_time\", \"_value\", \"_start\", \"_stop\", \"hacked\", \"owned\"])\r\n  |> sort(columns: [\"server\", \"usedRam\"], desc: true)\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Owned Servers",
+      "transparent": true,
+      "type": "bargauge"
     }
   ],
+  "refresh": "5s",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],
@@ -394,6 +449,6 @@
   "timezone": "",
   "title": "BitBurner",
   "uid": "xLXhoUJnz",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }
