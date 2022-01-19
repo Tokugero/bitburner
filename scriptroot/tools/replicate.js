@@ -20,13 +20,13 @@ export async function main(ns) {
 
 export async function replicate(ns) {
     var allServers = await mapServers.getAllServers(ns);
-    var files = ns.ls("home","/hacks/");
-    files = files.concat(ns.ls("home","/tools/"));
-    files = files.concat(ns.ls("home",".env.js"));
-    
+    var files = ns.ls("home", "/hacks/");
+    files = files.concat(ns.ls("home", "/tools/"));
+    files = files.concat(ns.ls("home", ".env.js"));
+
     for (const server of allServers) {
         ns.print(server);
-        if (server.hostname.indexOf("node-") == -1 ) {
+        if (!server.purchasedByPlayer) {
             await ns.scp(files, "home", server.hostname);
         };
     };
@@ -38,12 +38,11 @@ export async function hack(ns) {
     var allServers = await mapServers.getAllServers(ns);
     for (const server of allServers) {
         // Adding shim of 16 gig minimum ram to prevent servers from having to split their resources.
-        if (server.hostname.indexOf("node-") == -1) {
+        if (!server.purchasedByPlayer) {
             if (server.hasAdminRights) {
-                
                 ns.killall(server.hostname);
                 await ns.sleep(100);
-                var threads = manageServer.usableThreads(ns, server, '/hacks/node-hgw.js');
+                
                 ns.exec('hacks/node-hgw.js', server.hostname);
                 await ns.sleep(100);
             };
