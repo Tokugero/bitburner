@@ -36,7 +36,7 @@ export async function gracefulHack(ns) {
                 await ns.sleep(20);
                 isRoot = ns.hasRootAccess(server.hostname);
                 // Adding shim of 16 gig minimum ram to prevent servers from having to split their resources.
-                if (server.maxRam > 16 && isRoot) {
+                if (server.maxRam >= 16 && isRoot) {
                     var threads = manageServer.usableThreads(ns, server, "/hacks/node-hgw.js");
                     ns.exec('hacks/node-hgw.js', server.hostname, threads);
                 };

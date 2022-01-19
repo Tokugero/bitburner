@@ -53,7 +53,7 @@ export async function nodehgw(ns, server, target) {
             await ns.wget(`${url}hgw=weaken&weakening=-${freeThreads}&server=${server.hostname}`, `/dev/null.txt`);
 
             // Start massively increasing money available, run security weakeners in tandem
-        } else if (target.moneyAvailable < target.moneyMax * 0.9 && server.maxRam > 16) {
+        } else if (target.moneyAvailable < target.moneyMax * 0.9 && server.maxRam >= 16) {
             let growTime = ns.getGrowTime(target.hostname);
             let weakenTime = ns.getWeakenTime(target.hostname);
             let maxSleep = Math.max(growTime, weakenTime);
@@ -75,7 +75,7 @@ export async function nodehgw(ns, server, target) {
             await ns.wget(`${url}hgw=weaken&weakening=-${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
 
             // Do the hacking, run security weakeners in tandem
-        } else if (server.maxRam > 16) {
+        } else if (server.maxRam >= 16) {
             let hackTime = ns.getHackTime(target.hostname);
             let weakenTime = ns.getWeakenTime(target.hostname);
             let maxSleep = Math.max(hackTime, weakenTime);
