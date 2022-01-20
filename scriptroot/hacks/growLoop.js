@@ -8,7 +8,7 @@ export async function main(ns) {
     let server = ns.getServer(args._[0]);
     let target = ns.getServer(args._[1]);
     let freeThreads = args._[2];
-    
+
     await growLoop(ns, server, target, freeThreads);
 }
 

@@ -16,19 +16,18 @@ depth.
 
 export async function main(ns) {
     const thisHost = ns.getServer(ns.getHostname());
-    while (true) {
-        if (thisHost.maxRam < 1024){
-            var worstServer = await rando(ns);
-            await nodehgw(ns, thisHost, worstServer);
-        } else {
-            let worstServers = await topN(ns, Math.floor(thisHost.maxRam/1024));
-            await distributedNodehgw(ns, thisHost, worstServers);
-        }
+    if (thisHost.maxRam < 512){
+        var worstServer = await rando(ns);
+        await nodehgw(ns, thisHost, worstServer);
+    } else {
+        let worstServers = await topN(ns, Math.floor(thisHost.maxRam/512));
+        await distributedNodehgw(ns, thisHost, worstServers);
     };
 }
 
 /** @param {import("../../common").NS} ns */
 
+// Simplified loop for early game and small systems (<512GB)
 export async function nodehgw(ns, server, target) {
     let cont = true;
     const hgwRam = 2;
@@ -47,8 +46,6 @@ export async function nodehgw(ns, server, target) {
             }
             freeThreads = Math.floor((server.maxRam - 24) / hgwRam); // 2 = ram usage of hack/grow/weaken.js. 24 = headroom for this script + ctrl loop
         };
-
-        // TODO: Centralize this decision to a single server rather than each node invoking it. 
 
         // Significantly drop security to get it ripe for pickin'
         if (target.hackDifficulty > (target.minDifficulty + 1) || server.maxRam < 16) {
@@ -71,45 +68,8 @@ export async function nodehgw(ns, server, target) {
 /** @param {import("../../common").NS} ns */
 
 export async function distributedNodehgw(ns, server, targets) {
-    let cont = true;
-    const hgwRam = 2;
-
-    while (cont) {
-        for (let target of targets){
-            target = ns.getServer(target.hostname);
-            target.maxRam = Math.floor(target.maxRam/(target.maxRam/1024)); // This is to get the amount of ram, divided by the split assumed by calling this script, and set it for the remainder
-            await ns.wget(`${url}target=${target.hostname}&moneyMax=${target.moneyMax}&moneyAvailable=${target.moneyAvailable}&minDifficulty=${target.minDifficulty}&hackDifficulty=${target.hackDifficulty}`, `/dev/null.txt`);
-
-            ns.print(`Starting new loop\n${"-".repeat(80)} \n\t$ = ${target.moneyAvailable}/${target.moneyMax} \n\tSecurity = ${target.minDifficulty}/${target.hackDifficulty}`);
-            let freeThreads = Math.floor((server.maxRam - server.ramUsed) / hgwRam);
-
-            if (server.hostname == "home") {
-                if (server.maxRam < 32) {
-                    ns.tprint("You don't have a lot of ram, some of this may not work as expected. Upgrade to at least 32 asap!");
-                    freeThreads = Math.floor((server.maxRam - ramUsed) / hgwRam);
-                }
-                freeThreads = Math.floor((server.maxRam - 24) / hgwRam); // 2 = ram usage of hack/grow/weaken.js. 24 = headroom for this script + ctrl loop
-            };
-
-            // Significantly drop security to get it ripe for pickin'
-            if (target.hackDifficulty > (target.minDifficulty + 1)) {
-                ns.exec("/hacks/weakenLoop.js", server.hostname, 1, server.hostname, target.hostname, freeThreads);
-                await ns.sleep(ns.getWeakenTime(target.hostname));
-                
-                // Start massively increasing money available, run security weakeners in tandem
-            } else if (target.moneyAvailable < target.moneyMax * 0.9) {
-                ns.exec("/hacks/growLoop.js", server.hostname, 1, server.hostname, target.hostname, freeThreads);
-                await ns.sleep(ns.getGrowTime(target.hostname));
-
-                // Do the hacking, run security weakeners in tandem
-            } else if (server.maxRam) {
-                ns.exec("/hacks/hackLoop.js", server.hostname, 1, server.hostname, target.hostname, freeThreads);
-                await ns.sleep(ns.getHackTime(target.hostname));
-
-            } else {
-                await ns.sleep(100); // to prevent too aggressive loops from small hosts.
-            };
-        };
+    for (let target of targets){
+        ns.exec("/hacks/loopController.js", server.hostname, 1, server.hostname, target.hostname);
     };
 }
 
@@ -131,14 +91,18 @@ async function rando(ns) {
 
 async function topN(ns, splits) {
     let allServers = await mapServers.getAllServers(ns);
-    allServers.sort(function(a, b) {
+    let filteredServers = [];
+    for (const server of allServers) {
+        if (!server.purchasedByPlayer && server.moneyAvailable > 0 && server.hasAdminRights) {
+            filteredServers.push(server);
+        }
+    }    
+    filteredServers.sort(function(a, b) {
         let keyA = a.moneyMax;
         let keyB = b.moneyMax;
-        if (!a.purchasedByPlayer && a.moneyAvailable > 0 && a.hasAdminRights && !b.purchasedByPlayer && b.moneyAvailable > 0 && b.hasAdminRights){
-            if (keyA > keyB) return -1;
-            if (keyA < keyB) return 1;
-            return 0;
-        };
+        if (keyA > keyB) return -1;
+        if (keyA < keyB) return 1;
+        return 0;
     });
-    return allServers.slice(0,splits);
+    return filteredServers.slice(0,splits);
 };
