@@ -1,5 +1,5 @@
 import * as mapServers from './tools/mapServers.js';
-import { url } from '.env.js';
+import { url, bigWeight } from '.env.js';
 import { hackLoop } from './hacks/hackLoop.js';
 import { growLoop } from './hacks/growLoop.js';
 import { weakenLoop } from './hacks/weakenLoop.js';
@@ -16,18 +16,18 @@ depth.
 
 export async function main(ns) {
     const thisHost = ns.getServer(ns.getHostname());
-    if (thisHost.maxRam < 512){
+    if (thisHost.maxRam < bigWeight){
         var worstServer = await rando(ns);
         await nodehgw(ns, thisHost, worstServer);
     } else {
-        let worstServers = await topN(ns, Math.floor(thisHost.maxRam/512));
+        let worstServers = await topN(ns, Math.floor(thisHost.maxRam/bigWeight));
         await distributedNodehgw(ns, thisHost, worstServers);
     };
 }
 
 /** @param {import("../../common").NS} ns */
 
-// Simplified loop for early game and small systems (<512GB)
+// Simplified loop for early game and small systems (<bigWeightGB)
 export async function nodehgw(ns, server, target) {
     let cont = true;
     const hgwRam = 2;

@@ -1,4 +1,4 @@
-import { url } from '.env.js';
+import { url, bigWeight } from '.env.js';
 
 /** @param {import("../../common").NS} ns */
 
@@ -15,7 +15,7 @@ export async function main(ns) {
 export async function loopController(ns, server, target) {
     while(true){
         target = ns.getServer(target.hostname);
-        server.maxRam = Math.floor(server.maxRam / (server.maxRam / 512)); // This is to get the amount of ram, divided by the split assumed by calling this script, and set it for the remainder
+        server.maxRam = Math.floor(server.maxRam / (server.maxRam / bigWeight)); // This is to get the amount of ram, divided by the split assumed by calling this script, and set it for the remainder
         await ns.wget(`${url}target=${target.hostname}&moneyMax=${target.moneyMax}&moneyAvailable=${target.moneyAvailable}&minDifficulty=${target.minDifficulty}&hackDifficulty=${target.hackDifficulty}`, `/dev/null.txt`);
 
         ns.print(`Starting new loop\n${"-".repeat(80)} \n\t$ = ${target.moneyAvailable}/${target.moneyMax} \n\tSecurity = ${target.minDifficulty}/${target.hackDifficulty}`);

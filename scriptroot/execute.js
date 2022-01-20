@@ -50,6 +50,7 @@ export async function main(ns) {
     \talias init="run execute.js" --tail
     \talias get="run tools/genData.js"
     \talias hackabit="run hacks/node-hgw.js"
+    \talias spread="run tools/replicate.js"
     ${"-".repeat(80)}
     `);
 }

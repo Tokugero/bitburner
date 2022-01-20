@@ -26,7 +26,7 @@ export async function replicate(ns) {
 
     for (const server of allServers) {
         ns.print(server);
-        if (!server.purchasedByPlayer) {
+        if (!server.hostname !== "home") {
             await ns.scp(files, "home", server.hostname);
         };
     };
@@ -38,11 +38,11 @@ export async function hack(ns) {
     var allServers = await mapServers.getAllServers(ns);
     for (const server of allServers) {
         // Adding shim of 16 gig minimum ram to prevent servers from having to split their resources.
-        if (!server.purchasedByPlayer) {
+        if (server.hostname !== "home") {
             if (server.hasAdminRights) {
                 ns.killall(server.hostname);
                 await ns.sleep(100);
-                
+
                 ns.exec('hacks/node-hgw.js', server.hostname);
                 await ns.sleep(100);
             };
