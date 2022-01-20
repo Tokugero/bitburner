@@ -1,0 +1,15 @@
+apiVersion: 1
+
+datasources:
+  - name: postgres
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    user: bitburner
+    database: bitburner
+    isDefault: true
+    secureJsonData:
+      password: ${POSTGRES_PASSWORD}
+    jsonData:
+      sslmode: disable
+      postgresVersion: 1114

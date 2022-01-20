@@ -22,12 +22,15 @@ export async function handle(ns, contractFile, server, contractType){
         case 'Array Jumping Game':
             answer = arrayJumpingGame.solve(data);
             break;
+        case 'Total Ways To Sum':
+            answer = totalWaysToSum.solve(data);
         default:
             ns.print(`Contract type not handled yet.`);
             break;
     };
     if (answer !== ""){
         let reward = ns.codingcontract.attempt(answer, contractFile, server.hostname, {returnReward: true});
+        ns.tprint(`Contract ${contractType} solved for ${reward}`);
         return reward;
     } else {
         return "Just kidding, you failed to answer anything. Debug me!";
@@ -35,7 +38,10 @@ export async function handle(ns, contractFile, server, contractType){
 }
 
 export function getHandledTypes(){
-    var games = ["Array Jumping Game"];
+    var games = [
+        "Array Jumping Game",
+        "Total Ways To Sum"
+    ];
 
     return games;
 }

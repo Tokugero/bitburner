@@ -1,5 +1,8 @@
 import * as mapServers from './tools/mapServers.js';
-import { url } from '.env.js';
+import { url, bigWeight } from '.env.js';
+import { hackLoop } from './hacks/hackLoop.js';
+import { growLoop } from './hacks/growLoop.js';
+import { weakenLoop } from './hacks/weakenLoop.js';
 
 /*
 
@@ -12,14 +15,19 @@ depth.
 /** @param {import("../../common").NS} ns */
 
 export async function main(ns) {
-    while (true) {
+    const thisHost = ns.getServer(ns.getHostname());
+    if (thisHost.maxRam < bigWeight){
         var worstServer = await rando(ns);
-        await nodehgw(ns, ns.getServer(ns.getHostname()), worstServer);
+        await nodehgw(ns, thisHost, worstServer);
+    } else {
+        let worstServers = await topN(ns, Math.floor(thisHost.maxRam/bigWeight));
+        await distributedNodehgw(ns, thisHost, worstServers);
     };
 }
 
 /** @param {import("../../common").NS} ns */
 
+// Simplified loop for early game and small systems (<bigWeightGB)
 export async function nodehgw(ns, server, target) {
     let cont = true;
     const hgwRam = 2;
@@ -39,72 +47,29 @@ export async function nodehgw(ns, server, target) {
             freeThreads = Math.floor((server.maxRam - 24) / hgwRam); // 2 = ram usage of hack/grow/weaken.js. 24 = headroom for this script + ctrl loop
         };
 
-        // TODO: Centralize this decision to a single server rather than each node invoking it. 
-
         // Significantly drop security to get it ripe for pickin'
-        if (target.hackDifficulty > (target.minDifficulty + 0.05) || server.maxRam < 16) {
-            let minSleep = ns.getWeakenTime(target.hostname)
-
-            ns.print(`${target.hostname} currently at ${target.hackDifficulty} difficulty (min is ${target.minDifficulty})\nEntering weaken loop.`);
-            ns.exec("hacks/weaken.js", server.hostname, freeThreads, target.hostname);
-            await ns.wget(`${url}hgw=weaken&weakening=${freeThreads}&server=${server.hostname}`, `/dev/null.txt`);
-            ns.print(`Max weaken sleeping for ${(minSleep / 1000 / 60)}`);
-            await ns.sleep(minSleep + 1000);
-
-            await ns.wget(`${url}hgw=weaken&weakening=-${freeThreads}&server=${server.hostname}`, `/dev/null.txt`);
+        if (target.hackDifficulty > (target.minDifficulty + 1) || server.maxRam < 16) {
+            await weakenLoop(ns, server, target, freeThreads);
 
             // Start massively increasing money available, run security weakeners in tandem
         } else if (target.moneyAvailable < target.moneyMax * 0.9 && server.maxRam >= 16) {
-            let growTime = ns.getGrowTime(target.hostname);
-            let weakenTime = ns.getWeakenTime(target.hostname);
-            let maxSleep = Math.max(growTime, weakenTime);
-            let minSleep = Math.min(growTime, weakenTime);
-            let effectThreads = Math.floor(freeThreads * .9);
-            let weakenThreads = Math.ceil(freeThreads * .1);
-
-            ns.print(`Entering Grow loop.`);
-            ns.exec("hacks/weaken.js", server.hostname, weakenThreads, target.hostname);
-            await ns.wget(`${url}hgw=weaken&weakening=${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
-            ns.print(`Grow sleeping for ${(maxSleep - minSleep / 1000 / 60)}`);
-            await ns.sleep(maxSleep - minSleep);
-            await ns.wget(`${url}hgw=weaken&weakening=-${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
-
-            ns.print(`${target.hostname} currently at ${target.moneyAvailable} money (max is ${target.moneyMax})`);
-            ns.exec("hacks/grow.js", server.hostname, effectThreads, target.hostname);
-            await ns.wget(`${url}hgw=grow&growing=${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
-            // Offset the script runtime so that weaken finishes immediately after
-            ns.print(`Grow sleeping for ${(minSleep / 1000 / 60)}`);
-            await ns.sleep(minSleep + 10000);
-            await ns.wget(`${url}hgw=grow&growing=-${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
-
+            await growLoop(ns, server, target, freeThreads);
 
             // Do the hacking, run security weakeners in tandem
         } else if (server.maxRam >= 16) {
-            let hackTime = ns.getHackTime(target.hostname);
-            let weakenTime = ns.getWeakenTime(target.hostname);
-            let maxSleep = Math.max(hackTime, weakenTime);
-            let minSleep = Math.min(hackTime, weakenTime);
-            let effectThreads = Math.floor(freeThreads * .9);
-            let weakenThreads = Math.ceil(freeThreads * .1);
-
-            ns.print(`Entering Hack loop.`);
-            ns.exec("hacks/weaken.js", server.hostname, weakenThreads, target.hostname);
-            await ns.wget(`${url}hgw=weaken&weakening=${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
-            ns.print(`Hack sleeping for ${(maxSleep - minSleep / 1000 / 60)}`);
-            await ns.sleep(maxSleep - minSleep);
-            await ns.wget(`${url}hgw=weaken&weakening=-${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
-
-            ns.exec("hacks/hack.js", server.hostname, effectThreads, target.hostname);
-            await ns.wget(`${url}hgw=hack&hacking=${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
-            // Offset the script runtime so that weaken finishes immediately after
-            ns.print(`Hack sleeping for ${(minSleep / 1000 / 60)}`);
-            await ns.sleep(minSleep + 10000);
-            await ns.wget(`${url}hgw=hack&hacking=-${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
-
+            await hackLoop(ns, server, target, freeThreads);
 
         } else {
             await ns.sleep(100); // to prevent too aggressive loops from small hosts.
         };
+    };
+}
+
+/** @param {import("../../common").NS} ns */
+
+export async function distributedNodehgw(ns, server, targets) {
+    for (let target of targets){
+        ns.exec("/hacks/loopController.js", server.hostname, 1, server.hostname, target.hostname);
     };
 }
 
@@ -121,3 +86,23 @@ async function rando(ns) {
     }
     return mostMoney;
 }
+
+/** @param {import("../../common").NS} ns */
+
+async function topN(ns, splits) {
+    let allServers = await mapServers.getAllServers(ns);
+    let filteredServers = [];
+    for (const server of allServers) {
+        if (!server.purchasedByPlayer && server.moneyAvailable > 0 && server.hasAdminRights) {
+            filteredServers.push(server);
+        }
+    }    
+    filteredServers.sort(function(a, b) {
+        let keyA = a.moneyMax;
+        let keyB = b.moneyMax;
+        if (keyA > keyB) return -1;
+        if (keyA < keyB) return 1;
+        return 0;
+    });
+    return filteredServers.slice(0,splits);
+};
