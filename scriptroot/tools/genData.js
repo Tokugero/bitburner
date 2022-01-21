@@ -53,7 +53,7 @@ export async function connectionString(ns, remote) {
             path = server.trail.join("; connect ") + "; connect " + server.hostname;
         }
     }
-    return path;
+    return path + "; backdoor";
 }
 
 export async function searchServers(ns, search) {
