@@ -34,10 +34,10 @@ export async function handle(ns, contractFile, server, contractType){
             ns.tprint(`Contract ${contractType} solved for ${reward}`);
             return reward;
         } else {
-            ns.tprint(`Attempted to solve ${contractFile} on ${server.hostname} with the following answer, but it failed:
+            ns.tprint(`Attempted to solve ${contractType} on ${server.hostname} with the following answer, but it failed:
             \t${answer}
             The info was:
-            \t${ns.codingcontract.getDescription(contractFile, server.hostname)} `);
+            \t${ns.codingcontract.getData(contractFile, server.hostname)} `);
         }
     } else {
         return "Just kidding, you failed to answer anything. Debug me!";
