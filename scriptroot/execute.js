@@ -26,6 +26,8 @@ export async function main(ns) {
     await distribute.replicate(ns);
     ns.tprint("Initializing File Replicators.");
     await ns.sleep(1000); // Try to make all scripts start at different times
+
+    //start hacking downstream nodes
     await distribute.root(ns);
     ns.tprint("Initializing RCEs.");
     await ns.sleep(1000);
@@ -44,6 +46,14 @@ export async function main(ns) {
     await hacknetManager.startBuying(ns);
     ns.tprint("Initializing hacknet manager.");
     await ns.sleep(1000);
+
+    //start hacking
+    ns.tprint("Initializing hacking a bit.");
+    ns.exec("hacks/node-hgw.js", "home");
+
+    //share overhead
+    ns.exec("hacks/share.js","home");
+    ns.tprint("Initializing hacking contract extension.");
 
     ns.tprint(`
     Helpful alias commands:
