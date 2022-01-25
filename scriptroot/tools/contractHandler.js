@@ -1,5 +1,5 @@
 import * as arrayJumpingGame from './tools/contractTypes/arrayJumpingGame.js';
-
+import * as totalWaysToSum from './tools/contractTypes/totalWaysToSum.js';
 /*
 
 This is called any time a new contract is found. As new /tools/contractTypes are validated,
@@ -22,7 +22,7 @@ export async function handle(ns, contractFile, server, contractType){
         case 'Array Jumping Game':
             answer = arrayJumpingGame.solve(data);
             break;
-        case 'Total Ways To Sum':
+        case 'Total Ways to Sum':
             answer = totalWaysToSum.solve(data);
             break;
         default:
@@ -48,7 +48,7 @@ export async function handle(ns, contractFile, server, contractType){
 export function getHandledTypes(){
     var games = [
         "Array Jumping Game",
-        "Total Ways To Sum"
+        "Total Ways to Sum"
     ];
 
     return games;
