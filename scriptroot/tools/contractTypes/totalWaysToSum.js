@@ -12,12 +12,12 @@ export function solve(data){
 
 How many different ways can the number 87 be written as a sum of at least two positive integers? */
 
-    let solution = canSplit(ns, data);
+    let solution = canSplit(data);
 
     return solution;
 };
 
-function canSplit(ns, data){
+function canSplit(data){
     // Credit for my poor life decisions and failings as an adult https://www.geeksforgeeks.org/ways-to-write-n-as-sum-of-two-or-more-positive-integers/
     let table = new Array(data + 1);
     
