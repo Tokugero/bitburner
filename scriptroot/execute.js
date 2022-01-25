@@ -51,9 +51,9 @@ export async function main(ns) {
     ns.tprint("Initializing hacking a bit.");
     ns.exec("hacks/node-hgw.js", "home");
 
-    //share overhead
-    ns.exec("hacks/share.js","home");
-    ns.tprint("Initializing hacking contract extension.");
+    ////share overhead
+    //ns.exec("hacks/share.js","home");
+    //ns.tprint("Initializing hacking contract extension.");
 
     ns.tprint(`
     Helpful alias commands:

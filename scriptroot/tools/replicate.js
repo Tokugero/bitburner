@@ -44,9 +44,9 @@ export async function hack(ns) {
                 await ns.sleep(100);
 
                 ns.exec('hacks/node-hgw.js', server.hostname);
-                if (server.maxRam > 16){
-                    ns.exec('hacks/share.js', server.hostname);
-                };
+                //if (server.maxRam > 16){
+                //    ns.exec('hacks/share.js', server.hostname);
+                //};
                 await ns.sleep(100);
             };
         };
