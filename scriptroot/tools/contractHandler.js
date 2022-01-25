@@ -1,5 +1,7 @@
 import * as arrayJumpingGame from './tools/contractTypes/arrayJumpingGame.js';
 import * as totalWaysToSum from './tools/contractTypes/totalWaysToSum.js';
+import * as uniquePathsInAGridI from './tools/contractTypes/uniquePathsInAGridI.js';
+
 /*
 
 This is called any time a new contract is found. As new /tools/contractTypes are validated,
@@ -25,6 +27,9 @@ export async function handle(ns, contractFile, server, contractType){
         case 'Total Ways to Sum':
             answer = totalWaysToSum.solve(data);
             break;
+        case 'Unique Paths in a Grid I':
+            answer = uniquePathsInAGridI.solve(data);
+            break;
         default:
             ns.print(`Contract type not handled yet.`);
             break;
@@ -48,7 +53,8 @@ export async function handle(ns, contractFile, server, contractType){
 export function getHandledTypes(){
     var games = [
         "Array Jumping Game",
-        "Total Ways to Sum"
+        "Total Ways to Sum",
+        "Unique Paths in a Grid I"
     ];
 
     return games;
