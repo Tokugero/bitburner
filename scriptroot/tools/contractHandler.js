@@ -24,6 +24,7 @@ export async function handle(ns, contractFile, server, contractType){
             break;
         case 'Total Ways To Sum':
             answer = totalWaysToSum.solve(data);
+            break;
         default:
             ns.print(`Contract type not handled yet.`);
             break;
