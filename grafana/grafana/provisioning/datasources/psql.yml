@@ -7,7 +7,7 @@ datasources:
     url: postgres:5432
     user: bitburner
     database: bitburner
-    isDefault: true
+    isDefault: false
     secureJsonData:
       password: ${POSTGRES_PASSWORD}
     jsonData:
