@@ -60,7 +60,7 @@ export async function searchServers(ns, search) {
     let allServers = await mapServers.getAllServers(ns);
     let results = [];
     for (const server of allServers) {
-        if (server.hostname.includes(search)) {
+        if (server.hostname.toLowerCase().includes(search.toLowerCase())) {
             results.push(server);
         }
     }

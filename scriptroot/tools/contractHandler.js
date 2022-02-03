@@ -36,7 +36,7 @@ export async function handle(ns, contractFile, server, contractType){
     };
     if (answer !== ""){
         let reward = ns.codingcontract.attempt(answer, contractFile, server.hostname, {returnReward: true});
-        if (reward !== false){
+        if (reward !== ""){
             ns.tprint(`Contract ${contractType} solved for ${reward}`);
             return reward;
         } else {
