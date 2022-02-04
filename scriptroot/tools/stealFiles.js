@@ -27,7 +27,7 @@ export async function findChallenges(ns) {
             for (const file of findFiles) {
                 var contractType = ns.codingcontract.getContractType(file, server.hostname);
                 if (handledTypes.includes(contractType)) {
-                    ns.tprint(`Solved Contract for: ${await contractHandler.handle(ns, file, server, contractType)}`);
+                    await contractHandler.handle(ns, file, server, contractType);
                 } else {
                     challenges += `
                         ${"#".repeat(80)}
