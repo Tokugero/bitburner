@@ -12,27 +12,17 @@ this will be the function that generates the majority of income.
 
 export async function main(ns) {
     const args = ns.flags([]);
-    await provision(ns, args._[0]);
+    await maxProvision(ns);
+    ns.spawn("/tools/provision.js", 1);
 }
 
 /** @param {import("../../common").NS} ns */
 
 export async function provision(ns, upgradeRam = 16) {
-    /**
-     * 8 = ~14m
-     * 16 = ~21m
-     * 128 = ~40m
-     * 1024 = ~60m
-     * 16384 = ~3.5b
-     * 32768 = ~45b
-     * 65536 = ~1.5t
-     */
-    var upgradeCost = ns.getPurchasedServerLimit() * ns.getPurchasedServerCost(upgradeRam);
-    var files = ns.ls("home", "/hacks/");
+    const upgradeCost = ns.getPurchasedServerLimit() * ns.getPurchasedServerCost(upgradeRam);
+    let files = ns.ls("home", "/hacks/");
     files = files.concat(ns.ls("home", "/tools/"));
     files = files.concat(ns.ls("home", ".env.js"));
-
-    ns.exec("/tools/provisionFirstNodes.js", "home");
 
     if (upgradeCost < ns.getServerMoneyAvailable("home")) {
         var minRam = 9999999999999;
@@ -44,11 +34,26 @@ export async function provision(ns, upgradeRam = 16) {
         if (minRam < upgradeRam) {
             await manageUpgrade.upgradeNodes(ns, files, upgradeRam);
         };
-    } else {
-        ns.tprint(`It will cost more than you have to upgrade your cluster. Cost = ${upgradeCost}`);
     };
 
     for (const server of ns.getPurchasedServers()) {
         await manageServer.copyAndHack(ns, ns.getServer(server), files);
     };
+}
+
+export async function maxProvision(ns) {
+    let maxRam = 16;
+    const serverLimit = ns.getPurchasedServerLimit();
+    const availableFunds = ns.getServerMoneyAvailable("home");
+    let keepLooking = true;
+
+    while (keepLooking) {
+        let upgradeCost = serverLimit * ns.getPurchasedServerCost(maxRam);
+        maxRam = maxRam * 2;
+        if (upgradeCost > availableFunds) {
+            keepLooking = false;
+        }
+    }
+
+    await provision(ns, maxRam);
 }

@@ -14,7 +14,7 @@ This is a group of expensive functions that only need to be called when required
 export async function upgradeNodes(ns, files, ram) {
     var cloudNodes = ns.getPurchasedServers();
     for (const node of cloudNodes) {
-        if (ns.getServerMaxRam(node) < ram){
+        if (ns.getServerMaxRam(node) < ram) {
             await upgradeNode(ns, ram, node, files);
             await ns.sleep(20);
         };

@@ -20,7 +20,7 @@ export async function main(ns) {
     ]);
     if (args.tunnel !== "") {
         let fuzzy = await searchServers(ns, args.tunnel);
-        if (fuzzy.length > 1){
+        if (fuzzy.length > 1) {
             ns.tprint(`\nYour connection request was not specific enough.`);
             return;
         };
