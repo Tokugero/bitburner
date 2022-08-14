@@ -1,9 +1,8 @@
 import * as mapServers from './tools/mapServers.js';
-import { url, bigWeight } from '.env.js';
+import * as env from '.env.js';
 import { hackLoop } from './hacks/hackLoop.js';
 import { growLoop } from './hacks/growLoop.js';
 import { weakenLoop } from './hacks/weakenLoop.js';
-import { homehgwBuffer, hostMemoryFloor, moneyBuffer } from '../.env.js';
 
 /*
 
@@ -17,11 +16,11 @@ depth.
 
 export async function main(ns) {
     const thisHost = ns.getServer(ns.getHostname());
-    if (thisHost.maxRam < bigWeight) {
+    if (thisHost.maxRam < env.bigWeight) {
         var worstServer = await rando(ns);
         await nodehgw(ns, thisHost, worstServer);
     } else {
-        let worstServers = await topN(ns, Math.floor(thisHost.maxRam / bigWeight));
+        let worstServers = await topN(ns, Math.floor(thisHost.maxRam / env.bigWeight));
         await distributedNodehgw(ns, thisHost, worstServers);
     };
 }
@@ -31,33 +30,32 @@ export async function main(ns) {
 // Simplified loop for early game and small systems (<bigWeightGB)
 export async function nodehgw(ns, server, target) {
     let cont = true;
-    const hgwRam = hgwMemoryBuffer;
 
     while (cont) {
         target = ns.getServer(target.hostname);
-        await ns.wget(`${url}target=${target.hostname}&moneyMax=${target.moneyMax}&moneyAvailable=${target.moneyAvailable}&minDifficulty=${target.minDifficulty}&hackDifficulty=${target.hackDifficulty}`, `/dev/null.txt`);
+        await ns.wget(`${env.url}target=${target.hostname}&moneyMax=${target.moneyMax}&moneyAvailable=${target.moneyAvailable}&minDifficulty=${target.minDifficulty}&hackDifficulty=${target.hackDifficulty}`, `/dev/null.txt`);
 
         ns.print(`Starting new loop\n${"-".repeat(80)} \n\t$ = ${target.moneyAvailable}/${target.moneyMax} \n\tSecurity = ${target.minDifficulty}/${target.hackDifficulty}`);
-        let freeThreads = Math.floor((server.maxRam - server.ramUsed) / hgwRam);
+        let freeThreads = Math.floor((server.maxRam - server.ramUsed) / env.hgwMemoryBuffer);
 
         if (server.hostname == "home") {
-            if (server.maxRam < homehgwBuffer) {
+            if (server.maxRam < env.homehgwBuffer) {
                 ns.tprint("You don't have a lot of ram, some of this may not work as expected. Upgrade to at least 32 asap!");
-                freeThreads = Math.floor((server.maxRam - ramUsed) / hgwRam);
+                freeThreads = Math.floor((server.maxRam - ramUsed) / env.hgwMemoryBuffer);
             }
-            freeThreads = Math.floor((server.maxRam - homehgwBuffer) / hgwRam); // 2 = ram usage of hack/grow/weaken.js. 24 = headroom for this script + ctrl loop
+            freeThreads = Math.floor((server.maxRam - eng.homehgwBuffer) / env.hgwMemoryBuffer); // 2 = ram usage of hack/grow/weaken.js. 24 = headroom for this script + ctrl loop
         };
 
         // Significantly drop security to get it ripe for pickin'
-        if (target.hackDifficulty > (target.minDifficulty + 1) || server.maxRam < 16) {
+        if (target.hackDifficulty > (target.minDifficulty + 1) || server.maxRam < env.hostMemoryFloor) {
             await weakenLoop(ns, server, target, freeThreads);
 
             // Start massively increasing money available, run security weakeners in tandem
-        } else if (target.moneyAvailable < target.moneyMax * moneyBuffer && server.maxRam >= hostMemoryFloor) {
+        } else if (target.moneyAvailable < target.moneyMax * env.moneyBuffer && server.maxRam >= env.hostMemoryFloor) {
             await growLoop(ns, server, target, freeThreads);
 
             // Do the hacking, run security weakeners in tandem
-        } else if (server.maxRam >= hostMemoryFloor) {
+        } else if (server.maxRam >= env.hostMemoryFloor) {
             await hackLoop(ns, server, target, freeThreads);
 
         } else {

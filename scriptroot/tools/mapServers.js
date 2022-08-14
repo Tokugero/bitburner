@@ -1,5 +1,3 @@
-import { url } from '.env.js';
-
 /*
 
 The crux of many daemons to get a list of all servers in the purview of the player. All items
@@ -48,7 +46,7 @@ async function getServersDetails(ns, parentNode, origin = parentNode, trail = []
             serverDetails.trail = trail;
 
             branch.push(serverDetails);
-            branch = branch.concat(await getServersDetails(ns, serverDetails, parentNode, trail)); 
+            branch = branch.concat(await getServersDetails(ns, serverDetails, parentNode, trail));
         };
     };
     return branch;

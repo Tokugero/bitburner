@@ -7,6 +7,6 @@ provisioning purchasable servers and managing them.
 
 /** @param {import("../../common").NS} ns */
 
-export async function provision(ns, ramcount) {
+export async function provision(ns) {
     ns.exec('/tools/provision.js', 'home', 1);
 };

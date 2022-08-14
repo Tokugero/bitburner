@@ -1,4 +1,4 @@
-import { url } from '.env.js';
+import * as env from '.env.js';
 
 /** @param {import("../../common").NS} ns */
 
@@ -8,7 +8,7 @@ export async function main(ns) {
     let server = ns.getServer(args._[0]);
     let target = ns.getServer(args._[1]);
     let freeThreads = args._[2];
-    
+
     await weakenLoop(ns, server, target, freeThreads);
 }
 
@@ -19,9 +19,9 @@ export async function weakenLoop(ns, server, target, freeThreads) {
 
     ns.print(`${target.hostname} currently at ${target.hackDifficulty} difficulty (min is ${target.minDifficulty})\nEntering weaken loop.`);
     ns.exec("hacks/weaken.js", server.hostname, freeThreads, target.hostname);
-    await ns.wget(`${url}hgw=weaken&weakening=${freeThreads}&server=${server.hostname}`, `/dev/null.txt`);
+    await ns.wget(`${env.url}hgw=weaken&weakening=${freeThreads}&server=${server.hostname}`, `/dev/null.txt`);
     ns.print(`Max weaken sleeping for ${(minSleep / 1000 / 60)}`);
     await ns.sleep(minSleep + 1000);
 
-    await ns.wget(`${url}hgw=weaken&weakening=-${freeThreads}&server=${server.hostname}`, `/dev/null.txt`);
+    await ns.wget(`${env.url}hgw=weaken&weakening=-${freeThreads}&server=${server.hostname}`, `/dev/null.txt`);
 }

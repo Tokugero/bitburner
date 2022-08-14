@@ -1,3 +1,5 @@
+import * as env from '.env.js';
+
 /*
 
 Consume some remaining unused headroom of servers for faction rep gain.
@@ -7,7 +9,7 @@ Consume some remaining unused headroom of servers for faction rep gain.
 
 export async function main(ns) {
     let thisServer = ns.getServer();
-    let threads = (thisServer.maxRam * .1) / 8
+    let threads = (thisServer.maxRam * env.shareBuffer) / 8
     await ns.share();
     ns.spawn("hacks/share.js", threads);
 }

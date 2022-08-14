@@ -1,6 +1,4 @@
 import * as mapServers from './tools/mapServers.js';
-import * as manageServer from './tools/manageServer.js';
-
 /*
 
 This file is responsible for replicating all /tools & /hacks from the home server
@@ -27,6 +25,12 @@ export async function replicate(ns) {
     for (const server of allServers) {
         ns.print(server);
         if (!server.hostname !== "home") {
+            // clean up old files
+            await ns.rm("/tools/", server.hostname);
+            await ns.rm("/hacks/", server.hostname);
+            await ns.rm(".env.js", server.hostname);
+
+            // copy new files
             await ns.scp(files, "home", server.hostname);
         };
     };
@@ -37,16 +41,12 @@ export async function replicate(ns) {
 export async function hack(ns) {
     var allServers = await mapServers.getAllServers(ns);
     for (const server of allServers) {
-        // Adding shim of 16 gig minimum ram to prevent servers from having to split their resources.
         if (server.hostname !== "home") {
             if (server.hasAdminRights) {
                 ns.killall(server.hostname);
                 await ns.sleep(100);
 
                 ns.exec('hacks/node-hgw.js', server.hostname);
-                //if (server.maxRam > 16){
-                //    ns.exec('hacks/share.js', server.hostname);
-                //};
                 await ns.sleep(100);
             };
         };

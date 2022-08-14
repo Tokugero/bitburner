@@ -1,6 +1,6 @@
-import * as arrayJumpingGame from './tools/contracts/contractTypes/arrayJumpingGame.js';
-import * as totalWaysToSum from './tools/contracts/contractTypes/totalWaysToSum.js';
-import * as uniquePathsInAGridI from './tools/contracts/contractTypes/uniquePathsInAGridI.js';
+import * as arrayJumpingGame from '../tools/contracts/contractTypes/arrayJumpingGame.js';
+import * as totalWaysToSum from '../tools/contracts/contractTypes/totalWaysToSum.js';
+import * as uniquePathsInAGridI from '../tools/contracts/contractTypes/uniquePathsInAGridI.js';
 
 /*
 
@@ -11,13 +11,13 @@ add them to this list to let the /tools/stealFiles daemon auto-break them.
 
 /** @param {import("../../common/.").NS} ns */
 
-export async function main(ns){
+export async function main(ns) {
     return;
 }
 
 /** @param {import("../../common/.").NS} ns */
 
-export async function handle(ns, contractFile, server, contractType){
+export async function handle(ns, contractFile, server, contractType) {
     var data = ns.codingcontract.getData(contractFile, server.hostname);
     let answer = "";
     switch (contractType) {
@@ -34,9 +34,9 @@ export async function handle(ns, contractFile, server, contractType){
             ns.print(`Contract type not handled yet.`);
             break;
     };
-    if (answer !== ""){
-        let reward = ns.codingcontract.attempt(answer, contractFile, server.hostname, {returnReward: true});
-        if (reward !== ""){
+    if (answer !== "") {
+        let reward = ns.codingcontract.attempt(answer, contractFile, server.hostname, { returnReward: true });
+        if (reward !== "") {
             ns.tprint(`Contract ${contractType} solved for ${reward}`);
             return reward;
         } else {
@@ -50,7 +50,7 @@ export async function handle(ns, contractFile, server, contractType){
     };
 }
 
-export function getHandledTypes(){
+export function getHandledTypes() {
     var games = [
         "Array Jumping Game",
         "Total Ways to Sum",
