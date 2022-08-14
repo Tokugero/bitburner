@@ -34,6 +34,8 @@ export async function provision(ns, upgradeRam = 16) {
         if (minRam < upgradeRam) {
             await manageUpgrade.upgradeNodes(ns, files, upgradeRam);
         };
+    } else {
+        ns.tprint("Not enough money " + upgradeCost + " to upgrade to " + upgradeRam + " nodes.");
     };
 
     for (const server of ns.getPurchasedServers()) {
@@ -45,15 +47,18 @@ export async function maxProvision(ns) {
     let maxRam = 16;
     const serverLimit = ns.getPurchasedServerLimit();
     const availableFunds = ns.getServerMoneyAvailable("home");
-    let keepLooking = true;
+    let upgradeCost = serverLimit * ns.getPurchasedServerCost(maxRam);
+    let lastGoodRam = maxRam;
 
-    while (keepLooking) {
-        let upgradeCost = serverLimit * ns.getPurchasedServerCost(maxRam);
-        maxRam = maxRam * 2;
-        if (upgradeCost > availableFunds) {
-            keepLooking = false;
+    while (true) {
+        if (upgradeCost < availableFunds) {
+            lastGoodRam = maxRam;
+            maxRam = maxRam * 2;
+            upgradeCost = serverLimit * ns.getPurchasedServerCost(maxRam);
+        } else if (upgradeCost >= availableFunds) {
+            break;
         }
     }
 
-    await provision(ns, maxRam);
+    await provision(ns, lastGoodRam);
 }
