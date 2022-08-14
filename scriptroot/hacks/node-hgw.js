@@ -3,6 +3,7 @@ import { url, bigWeight } from '.env.js';
 import { hackLoop } from './hacks/hackLoop.js';
 import { growLoop } from './hacks/growLoop.js';
 import { weakenLoop } from './hacks/weakenLoop.js';
+import { homehgwBuffer, hostMemoryFloor, moneyBuffer } from '../.env.js';
 
 /*
 
@@ -30,7 +31,7 @@ export async function main(ns) {
 // Simplified loop for early game and small systems (<bigWeightGB)
 export async function nodehgw(ns, server, target) {
     let cont = true;
-    const hgwRam = 2;
+    const hgwRam = hgwMemoryBuffer;
 
     while (cont) {
         target = ns.getServer(target.hostname);
@@ -40,11 +41,11 @@ export async function nodehgw(ns, server, target) {
         let freeThreads = Math.floor((server.maxRam - server.ramUsed) / hgwRam);
 
         if (server.hostname == "home") {
-            if (server.maxRam < 32) {
+            if (server.maxRam < homehgwBuffer) {
                 ns.tprint("You don't have a lot of ram, some of this may not work as expected. Upgrade to at least 32 asap!");
                 freeThreads = Math.floor((server.maxRam - ramUsed) / hgwRam);
             }
-            freeThreads = Math.floor((server.maxRam - 24) / hgwRam); // 2 = ram usage of hack/grow/weaken.js. 24 = headroom for this script + ctrl loop
+            freeThreads = Math.floor((server.maxRam - homehgwBuffer) / hgwRam); // 2 = ram usage of hack/grow/weaken.js. 24 = headroom for this script + ctrl loop
         };
 
         // Significantly drop security to get it ripe for pickin'
@@ -52,11 +53,11 @@ export async function nodehgw(ns, server, target) {
             await weakenLoop(ns, server, target, freeThreads);
 
             // Start massively increasing money available, run security weakeners in tandem
-        } else if (target.moneyAvailable < target.moneyMax * 0.9 && server.maxRam >= 16) {
+        } else if (target.moneyAvailable < target.moneyMax * moneyBuffer && server.maxRam >= hostMemoryFloor) {
             await growLoop(ns, server, target, freeThreads);
 
             // Do the hacking, run security weakeners in tandem
-        } else if (server.maxRam >= 16) {
+        } else if (server.maxRam >= hostMemoryFloor) {
             await hackLoop(ns, server, target, freeThreads);
 
         } else {

@@ -8,14 +8,14 @@ to /data/challenges.txt (etc) or to auto-solve challenges it finds. It is curren
 assumed there is no other interesting files other than light lore and .cct challenges.
 
 */
-/** @param {import("../../common/.").NS} ns */
+/** @param {import("../../../common").NS} ns */
 
 export async function main(ns) {
     await findChallenges(ns);
-    ns.spawn("/tools/stealFiles.js");
+    ns.spawn("/tools/contracts/stealFiles.js");
 }
 
-/** @param {import("../../common/.").NS} ns */
+/** @param {import("../../../common").NS} ns */
 
 export async function findChallenges(ns) {
     var allServers = await mapServers.getAllServers(ns);
