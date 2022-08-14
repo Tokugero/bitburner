@@ -1,0 +1,1 @@
+For any new identified games in /data/challenges, make sure to solve them here and add the handle to /tools/contracts/contractHandler!

@@ -15,9 +15,25 @@ Potentially in the future there may be a watcher daemon to pass status between s
 
 */
 
+////////////////////////////////////////////////////////////////////////////////////////////
+//  Static configs
+////////////////////////////////////////////////////////////////////////////////////////////
+
+const nodesize = 8;
+const sleep = 1000;
+////////////////////////////////////////////////////////////////////////////////////////////
+//  Calculations
+////////////////////////////////////////////////////////////////////////////////////////////
+
+const noderam = 2 ** nodesize;
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//  Startup sequences
+////////////////////////////////////////////////////////////////////////////////////////////
+
 /** @param {import("../common").NS} ns */
 
-export async function main(ns) { 
+export async function main(ns) {
     //start stat exporter
     await stats.grafana(ns);
     ns.tprint("Initializing monitoring.");
@@ -25,35 +41,35 @@ export async function main(ns) {
     //start distribute
     await distribute.replicate(ns);
     ns.tprint("Initializing File Replicators.");
-    await ns.sleep(1000); // Try to make all scripts start at different times
+    await ns.sleep(sleep); // Try to make all scripts start at different times
 
     //start hacking downstream nodes
     await distribute.root(ns);
     ns.tprint("Initializing RCEs.");
-    await ns.sleep(1000);
+    await ns.sleep(sleep);
 
     //start file discovery
     await distribute.finderKeeper(ns);
     ns.tprint("Initializing file scrapers.");
-    await ns.sleep(1000);
+    await ns.sleep(sleep);
 
     //start cloudcompute
-    await cloudcompute.provision(ns, 16);
+    await cloudcompute.provision(ns, noderam);
     ns.tprint("Purchasing first servers.");
-    await ns.sleep(5000); 
+    await ns.sleep(5000);
 
     //start hacknet
     await hacknetManager.startBuying(ns);
     ns.tprint("Initializing hacknet manager.");
-    await ns.sleep(1000);
+    await ns.sleep(sleep);
 
     //start hacking
     ns.tprint("Initializing hacking a bit.");
     ns.exec("hacks/node-hgw.js", "home");
 
     ////share overhead
-    //ns.exec("hacks/share.js","home");
-    //ns.tprint("Initializing hacking contract extension.");
+    ns.tprint("Initializing hacking contract extension.");
+    ns.exec("hacks/share.js", "home");
 
     ns.tprint(`
     Helpful alias commands:

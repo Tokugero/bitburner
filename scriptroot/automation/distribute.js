@@ -20,5 +20,5 @@ export async function replicate(ns) {
 /** @param {import("../../common").NS} ns */
 
 export async function finderKeeper(ns) {
-    ns.exec('tools/stealFiles.js', 'home', 1);
+    ns.exec('/tools/stealFiles.js', 'home', 1);
 }

@@ -16,11 +16,11 @@ depth.
 
 export async function main(ns) {
     const thisHost = ns.getServer(ns.getHostname());
-    if (thisHost.maxRam < bigWeight){
+    if (thisHost.maxRam < bigWeight) {
         var worstServer = await rando(ns);
         await nodehgw(ns, thisHost, worstServer);
     } else {
-        let worstServers = await topN(ns, Math.floor(thisHost.maxRam/bigWeight));
+        let worstServers = await topN(ns, Math.floor(thisHost.maxRam / bigWeight));
         await distributedNodehgw(ns, thisHost, worstServers);
     };
 }
@@ -68,8 +68,9 @@ export async function nodehgw(ns, server, target) {
 /** @param {import("../../common").NS} ns */
 
 export async function distributedNodehgw(ns, server, targets) {
-    for (let target of targets){
+    for (let target of targets) {
         ns.exec("/hacks/loopController.js", server.hostname, 1, server.hostname, target.hostname);
+        ns.exec("/hacks/share.js", server.hostname);
     };
 }
 
@@ -96,13 +97,13 @@ async function topN(ns, splits) {
         if (!server.purchasedByPlayer && server.moneyAvailable > 0 && server.hasAdminRights) {
             filteredServers.push(server);
         }
-    }    
-    filteredServers.sort(function(a, b) {
+    }
+    filteredServers.sort(function (a, b) {
         let keyA = a.moneyMax;
         let keyB = b.moneyMax;
         if (keyA > keyB) return -1;
         if (keyA < keyB) return 1;
         return 0;
     });
-    return filteredServers.slice(0,splits);
+    return filteredServers.slice(0, splits);
 };

@@ -10,7 +10,7 @@ this will be the function that generates the majority of income.
 
 /** @param {import("../../common").NS} ns */
 
-export async function main(ns){
+export async function main(ns) {
     const args = ns.flags([]);
     await provision(ns, args._[0]);
 }
@@ -22,8 +22,10 @@ export async function provision(ns, upgradeRam = 16) {
      * 8 = ~14m
      * 16 = ~21m
      * 128 = ~40m
-     * 1024 = ~1.5b
-     * 16384 = ~30b
+     * 1024 = ~60m
+     * 16384 = ~3.5b
+     * 32768 = ~45b
+     * 65536 = ~1.5t
      */
     var upgradeCost = ns.getPurchasedServerLimit() * ns.getPurchasedServerCost(upgradeRam);
     var files = ns.ls("home", "/hacks/");

@@ -1,5 +1,5 @@
 import * as mapServers from './tools/mapServers.js';
-import * as contractHandler from './tools/contractHandler.js';
+import * as contractHandler from './tools/contracts/contractHandler.js';
 
 /*
 
