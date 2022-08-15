@@ -69,7 +69,7 @@ export async function nodehgw(ns, server, target) {
 export async function distributedNodehgw(ns, server, targets) {
     for (let target of targets) {
         ns.exec("/hacks/loopController.js", server.hostname, 1, server.hostname, target.hostname);
-        ns.exec("/hacks/share.js", server.hostname);
+        ns.exec("/hacks/shareLoop.js", server.hostname);
     };
 }
 
