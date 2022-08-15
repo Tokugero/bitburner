@@ -13,7 +13,7 @@ this will be the function that generates the majority of income.
 export async function main(ns) {
     const args = ns.flags([]);
     await maxProvision(ns);
-    ns.spawn("/tools/provision.js", 1);
+    ns.spawn("tools/provision.js", 1);
 }
 
 /** @param {import("../../common").NS} ns */
@@ -60,5 +60,9 @@ export async function maxProvision(ns) {
         }
     }
 
-    await provision(ns, lastGoodRam);
+    const purchasedServers = ns.getPurchasedServers();
+    const sampleServer = purchasedServers[0];
+    if (sampleServer.maxRam < lastGoodRam) {
+        await ns.provision(lastGoodRam);
+    }
 }

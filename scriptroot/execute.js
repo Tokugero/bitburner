@@ -49,7 +49,7 @@ export async function main(ns) {
 
     //start cloudcompute
     await cloudcompute.provision(ns);
-    ns.tprint("Purchasing first servers.");
+    ns.tprint("Initializing provisioner.");
     await ns.sleep(5000);
 
     //start hacknet
@@ -62,8 +62,8 @@ export async function main(ns) {
     ns.exec("hacks/node-hgw.js", "home");
 
     ////share overhead
-    ns.tprint("Initializing hacking contract extension.");
-    ns.exec("hacks/share.js", "home");
+    ns.tprint("Initializing sharing.");
+    ns.exec("hacks/shareLoop.js", "home");
 
     ns.tprint(`
     Helpful alias commands:

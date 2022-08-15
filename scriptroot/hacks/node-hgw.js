@@ -17,7 +17,7 @@ depth.
 export async function main(ns) {
     const thisHost = ns.getServer(ns.getHostname());
     if (thisHost.maxRam < env.bigWeight) {
-        var worstServer = await rando(ns);
+        let worstServer = await rando(ns);
         await nodehgw(ns, thisHost, worstServer);
     } else {
         let worstServers = await topN(ns, Math.floor(thisHost.maxRam / env.bigWeight));
@@ -68,9 +68,9 @@ export async function nodehgw(ns, server, target) {
 
 export async function distributedNodehgw(ns, server, targets) {
     for (let target of targets) {
-        ns.exec("/hacks/loopController.js", server.hostname, 1, server.hostname, target.hostname);
-        ns.exec("/hacks/shareLoop.js", server.hostname);
+        ns.exec("hacks/loopController.js", server.hostname, 1, server.hostname, target.hostname);
     };
+    ns.exec("hacks/shareLoop.js", server.hostname);
 }
 
 /** @param {import("../../common").NS} ns */

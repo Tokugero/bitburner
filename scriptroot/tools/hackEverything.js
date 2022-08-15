@@ -18,11 +18,11 @@ export async function main(ns) {
 /** @param {import("../../common/.").NS} ns */
 
 export async function gracefulHack(ns) {
-    var allServers = await mapServers.getAllServers(ns);
-    var mylevel = ns.getHackingLevel();
+    let allServers = await mapServers.getAllServers(ns);
+    let mylevel = ns.getHackingLevel();
 
     for (const server of allServers) {
-        var isRoot = server.hasAdminRights;
+        let isRoot = server.hasAdminRights;
         if (mylevel >= server.requiredHackingSkill && !isRoot) {
 
             if (!server.sshPortOpen && ns.fileExists("BruteSSH.exe", "home")) { ns.toast(`Bruteforcing ${server.hostname}: ${ns.brutessh(server.hostname)}`); };
@@ -38,7 +38,7 @@ export async function gracefulHack(ns) {
                 isRoot = ns.hasRootAccess(server.hostname);
                 // Adding shim of 16 gig minimum ram to prevent servers from having to split their resources.
                 if (server.maxRam >= env.hostMemoryFloor && isRoot) {
-                    var threads = manageServer.usableThreads(ns, server, "/hacks/node-hgw.js");
+                    let threads = manageServer.usableThreads(ns, server, "hacks/node-hgw.js");
                     ns.exec('hacks/node-hgw.js', server.hostname, threads);
                 };
             };
