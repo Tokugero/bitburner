@@ -11,7 +11,6 @@ this will be the function that generates the majority of income.
 /** @param {import("../../common").NS} ns */
 
 export async function main(ns) {
-    const args = ns.flags([]);
     await maxProvision(ns);
     ns.spawn("tools/provision.js", 1);
 }
@@ -25,17 +24,24 @@ export async function provision(ns, upgradeRam = 16) {
     files = files.concat(ns.ls("home", ".env.js"));
 
     if (upgradeCost < ns.getServerMoneyAvailable("home")) {
-        var minRam = 9999999999999;
+        let minRam = 9999999999999;
         for (const node of ns.getPurchasedServers()) {
             if (ns.getServer(node).maxRam < minRam) {
                 minRam = ns.getServer(node).maxRam;
             };
         };
         if (minRam < upgradeRam) {
+            ns.toast("Upgrading nodes to " + upgradeRam + "GB ram.", "success");
             await manageUpgrade.upgradeNodes(ns, files, upgradeRam);
         };
+        if (ns.getPurchasedServers().length <= ns.getPurchasedServerLimit()) {
+            ns.toast("Below limit, purchasing first servers.", "success");
+            while (ns.getPurchasedServers().length < ns.getPurchasedServerLimit()) {
+                await manageUpgrade.purchaseServer(ns, upgradeRam, files);
+            }
+        }
     } else {
-        ns.tprint("Not enough money " + upgradeCost + " to upgrade to " + upgradeRam + " nodes.");
+        ns.toast("Not enough money " + upgradeCost + " to upgrade to " + upgradeRam + " nodes.", "warning");
     };
 
     for (const server of ns.getPurchasedServers()) {
@@ -44,11 +50,18 @@ export async function provision(ns, upgradeRam = 16) {
 }
 
 export async function maxProvision(ns) {
+    ns.print("Checking for max provision.");
     let maxRam = 16;
     const serverLimit = ns.getPurchasedServerLimit();
     const availableFunds = ns.getServerMoneyAvailable("home");
     let upgradeCost = serverLimit * ns.getPurchasedServerCost(maxRam);
     let lastGoodRam = maxRam;
+    const purchasedServers = ns.getPurchasedServers();
+    if (purchasedServers.length < serverLimit) {
+        ns.tprint("Not enough purchased servers, purchasing first servers.");
+        await provision(ns);
+        return;
+    }
 
     while (true) {
         if (upgradeCost < availableFunds) {
@@ -56,13 +69,17 @@ export async function maxProvision(ns) {
             maxRam = maxRam * 2;
             upgradeCost = serverLimit * ns.getPurchasedServerCost(maxRam);
         } else if (upgradeCost >= availableFunds) {
+            ns.print("Not enough money " + upgradeCost + " to upgrade to " + maxRam + " nodes. Breaking max provision.");
+            break;
+        } else {
             break;
         }
     }
 
-    const purchasedServers = ns.getPurchasedServers();
-    const sampleServer = purchasedServers[0];
+    const sampleServer = ns.getServer(purchasedServers[0]);
     if (sampleServer.maxRam < lastGoodRam) {
-        await ns.provision(lastGoodRam);
+        ns.print("Upgrading nodes to " + lastGoodRam + "GB ram.");
+        await provision(ns, lastGoodRam);
+        return;
     }
 }
