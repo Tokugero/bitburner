@@ -1,4 +1,4 @@
-import * as mapServers from '../mapServers.js';
+import * as mapServers from '../../mapServers.js';
 import * as contractHandler from './contractHandler.js';
 
 /*

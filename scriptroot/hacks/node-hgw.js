@@ -93,7 +93,7 @@ async function topN(ns, splits) {
     let allServers = await mapServers.getAllServers(ns);
     let filteredServers = [];
     for (const server of allServers) {
-        if (!server.purchasedByPlayer && server.moneyAvailable > 0 && server.hasAdminRights) {
+        if (!server.purchasedByPlayer && server.moneyAvailable >= 0 && server.hasAdminRights) {
             filteredServers.push(server);
         }
     }
