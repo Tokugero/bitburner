@@ -15,6 +15,7 @@ export async function main(ns) {
         ["help", false],
         ["tunnel", ""],
         ["analyze", ""],
+        ["backdoors", false],
         ["search", ""],
         ["morenodes", 0]
     ]);
@@ -29,11 +30,26 @@ export async function main(ns) {
         ns.tprint(`\n${await ns.getServer(args.analyze)}`);
     } else if (args.search) {
         ns.tprint(`\n${JSON.stringify(await searchServers(ns, args.search), null, 2)}`);
+    } else if (args.backdoors) {
+        const notables = ["CSEC", "I.I.I.I", "avmnite-02h", "run4theh111z", "The-Cave"];
+        for (const noteable of notables) {
+            const detailedNoteable = ns.getServer(noteable);
+            if (detailedNoteable.backdoorInstalled) {
+                ns.tprint('\n' + noteable + ' is already backdoored!');
+            } else if (detailedNoteable.openPortCount < detailedNoteable.numOpenPortsRequired) {
+                ns.tprint('\n' + noteable + ' needs more hax');
+            } else if (detailedNoteable.requiredHackingSkill > ns.getHackingLevel()) {
+                ns.tprint('\n' + noteable + ' requires more hacking: ' + detailedNoteable.requiredHackingSkill);
+            } else {
+                ns.tprint('\n' + await connectionString(ns, noteable));
+            }
+        }
     } else if (args.morenodes > 0) {
         let result = await cloudcompute.provision(ns, args.morenodes);
         ns.tprint(`\nAttempting to purchase nodes. Try scanning after a bit.`);
     } else if (args.help || !args._[0]) {
         ns.tprint(`
+        --backdoors            \tGet interesting servers that need to be backdoored.
         --tunnel <hostname>    \tGenerates connection string to hostname
         --analyze <hostname>    \tDisplays detailed data about server
         --search <substring>    \tFind hosts that are beyond the analyze command
