@@ -7,19 +7,19 @@ export async function main(ns) {
 
     let server = ns.getServer(args._[0]);
     let target = ns.getServer(args._[1]);
+    let targets = args._[2];
 
-    await loopController(ns, server, target);
+    await loopController(ns, server, target, targets);
 }
 
 /** @param {import("../../common").NS} ns */
-export async function loopController(ns, server, target) {
+export async function loopController(ns, server, target, targets) {
     while (true) {
-        target = ns.getServer(target.hostname);
-        server.maxRam = Math.floor(server.maxRam / (server.maxRam / env.bigWeight)); // This is to get the amount of ram, divided by the split assumed by calling this script, and set it for the remainder
+        let portionRam = Math.floor(server.maxRam / targets);
         await ns.wget(`${env.url}target=${target.hostname}&moneyMax=${target.moneyMax}&moneyAvailable=${target.moneyAvailable}&minDifficulty=${target.minDifficulty}&hackDifficulty=${target.hackDifficulty}`, `/dev/null.txt`);
 
         ns.print(`Starting new loop\n${"-".repeat(80)} \n\t$ = ${target.moneyAvailable}/${target.moneyMax} \n\tSecurity = ${target.minDifficulty}/${target.hackDifficulty}`);
-        let freeThreads = Math.floor((server.maxRam) / env.hgwMemoryBuffer);
+        let freeThreads = Math.floor(portionRam / env.hgwMemoryBuffer);
 
         // Significantly drop security to get it ripe for pickin'
         if (target.hackDifficulty > (target.minDifficulty + env.securityBuffer)) {
@@ -32,10 +32,9 @@ export async function loopController(ns, server, target) {
             await ns.sleep(ns.getGrowTime(target.hostname));
 
             // Do the hacking, run security weakeners in tandem
-        } else if (server.maxRam) {
+        } else {
             ns.exec("/hacks/hackLoop.js", server.hostname, 1, server.hostname, target.hostname, freeThreads);
             await ns.sleep(ns.getHackTime(target.hostname));
-
         };
         await ns.sleep(200);
     };
