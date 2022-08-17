@@ -1,5 +1,6 @@
 import * as mapServers from '../../mapServers.js';
 import * as contractHandler from './contractHandler.js';
+import * as mqp from './tools/queuePorts.js';
 
 /*
 
@@ -18,14 +19,14 @@ export async function main(ns) {
 /** @param {import("../../../common").NS} ns */
 
 export async function findChallenges(ns) {
-    var allServers = await mapServers.getAllServers(ns);
-    var challenges = "";
+    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
+    let challenges = "";
     let handledTypes = contractHandler.getHandledTypes()
     for (const server of allServers) {
-        var findFiles = ns.ls(server.hostname, ".cct");
+        let findFiles = ns.ls(server.hostname, ".cct");
         if (findFiles.length > 0) {
             for (const file of findFiles) {
-                var contractType = ns.codingcontract.getContractType(file, server.hostname);
+                let contractType = ns.codingcontract.getContractType(file, server.hostname);
                 if (handledTypes.includes(contractType)) {
                     ns.tprint(`Solved Contract for: ${await contractHandler.handle(ns, file, server, contractType)}`);
                 } else {

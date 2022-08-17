@@ -1,4 +1,5 @@
-import * as mapServers from './tools/mapServers.js';
+import * as mqp from './tools/queuePorts.js';
+import * as env from '.env.js'
 /*
 
 This file is responsible for replicating all /tools & /hacks from the home server
@@ -17,8 +18,9 @@ export async function main(ns) {
 /** @param {import("../common").NS} ns */
 
 export async function replicate(ns) {
-    var allServers = await mapServers.getAllServers(ns);
-    var files = ns.ls("home", "/hacks/");
+    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
+    ns.print(allServers + " read from cache.");
+    let files = ns.ls("home", "/hacks/");
     files = files.concat(ns.ls("home", "/tools/"));
     files = files.concat(ns.ls("home", ".env.js"));
 
@@ -39,7 +41,7 @@ export async function replicate(ns) {
 /** @param {import("../common").NS} ns */
 
 export async function hack(ns) {
-    var allServers = await mapServers.getAllServers(ns);
+    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
     for (const server of allServers) {
         if (server.hostname !== "home") {
             if (server.hasAdminRights) {

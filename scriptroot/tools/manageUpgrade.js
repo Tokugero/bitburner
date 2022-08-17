@@ -29,9 +29,9 @@ export async function upgradeNode(ns, ram, server, files) {
     if (ns.getServerMaxRam(server) < ram) {
         if (cost <= player.money) {
             ns.killall(server);
-            await ns.sleep(1000);
+            await ns.sleep(20);
             ns.deleteServer(server);
-            await ns.sleep(1000);
+            await ns.sleep(20);
             await purchaseServer(ns, ram, files)
         } else {
             await ns.sleep(600000);

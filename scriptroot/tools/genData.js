@@ -1,5 +1,6 @@
 import * as mapServers from 'tools/mapServers.js';
 import * as cloudcompute from 'automation/cloudcompute.js';
+import * as mqp from './tools/queuePorts.js';
 
 /*
 
@@ -49,7 +50,7 @@ export async function main(ns) {
         ns.tprint(`\nAttempting to purchase nodes. Try scanning after a bit.`);
     } else if (args.help || !args._[0]) {
         ns.tprint(`
-        --backdoors            \tGet interesting servers that need to be backdoored.
+        --backdoors            \tGet interesting servers that need to be backdoor
         --tunnel <hostname>    \tGenerates connection string to hostname
         --analyze <hostname>    \tDisplays detailed data about server
         --search <substring>    \tFind hosts that are beyond the analyze command
@@ -62,7 +63,7 @@ export async function main(ns) {
 
 export async function connectionString(ns, remote) {
 
-    let allServers = await mapServers.getAllServers(ns);
+    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
     var path = "Not found.";
     for (const server of allServers) {
         if (server.hostname === remote) {
@@ -73,7 +74,7 @@ export async function connectionString(ns, remote) {
 }
 
 export async function searchServers(ns, search) {
-    let allServers = await mapServers.getAllServers(ns);
+    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
     let results = [];
     for (const server of allServers) {
         if (server.hostname.toLowerCase().includes(search.toLowerCase())) {

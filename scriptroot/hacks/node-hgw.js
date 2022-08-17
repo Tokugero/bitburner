@@ -3,6 +3,8 @@ import * as env from '.env.js';
 import { hackLoop } from './hacks/hackLoop.js';
 import { growLoop } from './hacks/growLoop.js';
 import { weakenLoop } from './hacks/weakenLoop.js';
+import * as mqp from './tools/queuePorts.js';
+
 
 /*
 
@@ -37,6 +39,10 @@ export async function nodehgw(ns, server, target) {
 
         ns.print(`Starting new loop\n${"-".repeat(80)} \n\t$ = ${target.moneyAvailable}/${target.moneyMax} \n\tSecurity = ${target.minDifficulty}/${target.hackDifficulty}`);
         let freeThreads = Math.floor((server.maxRam - server.ramUsed) / env.hgwMemoryBuffer);
+
+        if (freeThreads == 0) {
+            freeThreads = 1;
+        }
 
         if (server.hostname == "home") {
             if (server.maxRam < env.homehgwBuffer) {
@@ -76,7 +82,7 @@ export async function distributedNodehgw(ns, server, targets) {
 /** @param {import("../../common").NS} ns */
 
 async function rando(ns) {
-    var allServers = await mapServers.getAllServers(ns);
+    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
     let mostMoney = ns.getServer("n00dles");
 
     for (const server of allServers) {
@@ -90,7 +96,7 @@ async function rando(ns) {
 /** @param {import("../../common").NS} ns */
 
 async function topN(ns, splits) {
-    let allServers = await mapServers.getAllServers(ns);
+    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
     let filteredServers = [];
     for (const server of allServers) {
         if (!server.purchasedByPlayer && server.moneyAvailable >= 0 && server.hasAdminRights) {

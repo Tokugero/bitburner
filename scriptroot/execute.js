@@ -2,6 +2,7 @@ import * as cloudcompute from 'automation/cloudcompute.js';
 import * as distribute from 'automation/distribute.js';
 import * as hacknetManager from 'automation/hacknet.js';
 import * as stats from 'automation/stats.js';
+import * as caching from 'automation/caching.js';
 
 /* 
 
@@ -28,6 +29,10 @@ const sleep = 1000;
 /** @param {import("../common").NS} ns */
 
 export async function main(ns) {
+    //start caches
+    await caching.cache(ns);
+    ns.tprint("Initializing caching services")
+
     //start stat exporter
     await stats.grafana(ns);
     ns.tprint("Initializing monitoring.");

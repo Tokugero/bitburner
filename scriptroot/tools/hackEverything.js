@@ -1,6 +1,8 @@
 import * as mapServers from './tools/mapServers';
 import * as manageServer from './tools/manageServer';
 import * as env from '.env.js';
+import * as mqp from './tools/queuePorts.js';
+
 
 /*
 
@@ -18,7 +20,7 @@ export async function main(ns) {
 /** @param {import("../../common/.").NS} ns */
 
 export async function gracefulHack(ns) {
-    let allServers = await mapServers.getAllServers(ns);
+    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
     let mylevel = ns.getHackingLevel();
 
     for (const server of allServers) {

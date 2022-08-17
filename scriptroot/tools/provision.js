@@ -58,7 +58,7 @@ export async function maxProvision(ns) {
     let lastGoodRam = maxRam;
     const purchasedServers = ns.getPurchasedServers();
     if (purchasedServers.length < serverLimit) {
-        ns.tprint("Not enough purchased servers, purchasing first servers.");
+        ns.toast("Not enough purchased servers, purchasing first servers.", "warning");
         await provision(ns);
         return;
     }
