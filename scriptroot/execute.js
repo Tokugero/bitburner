@@ -3,6 +3,7 @@ import * as distribute from 'automation/distribute.js';
 import * as hacknetManager from 'automation/hacknet.js';
 import * as stats from 'automation/stats.js';
 import * as caching from 'automation/caching.js';
+import * as env from '.env.js';
 
 /* 
 
@@ -32,10 +33,12 @@ export async function main(ns) {
     //start caches
     await caching.cache(ns);
     ns.tprint("Initializing caching services")
+    await ns.sleep(sleep);
 
     //start stat exporter
     await stats.grafana(ns);
     ns.tprint("Initializing monitoring.");
+    await ns.sleep(sleep);
 
     //start distribute
     await distribute.replicate(ns);
@@ -47,28 +50,29 @@ export async function main(ns) {
     ns.tprint("Initializing RCEs.");
     await ns.sleep(sleep);
 
-    //start file discovery
-    await distribute.finderKeeper(ns);
-    ns.tprint("Initializing file scrapers.");
-    await ns.sleep(sleep);
-
     //start cloudcompute
     await cloudcompute.provision(ns);
     ns.tprint("Initializing provisioner.");
     await ns.sleep(5000);
 
     //start hacknet
-    await hacknetManager.startBuying(ns);
-    ns.tprint("Initializing hacknet manager.");
-    await ns.sleep(sleep);
+    if (env.enableHacknet) {
+        await hacknetManager.startBuying(ns);
+        ns.tprint("Initializing hacknet manager.");
+        await ns.sleep(sleep);
+    } else if (!env.enableHacknet) { ns.tprint("Hacknet disabled."); };
 
-    //start hacking
-    ns.tprint("Initializing hacking a bit.");
-    ns.exec("hacks/node-hgw.js", "home");
+    if (ns.getServerMaxRam("home") >= env.homehgwBuffer + env.hostMemoryFloor + env.hgwMemoryBuffer) {
+        //start hacking
+        ns.tprint("Initializing hacking a bit.");
+        ns.exec("hacks/node-hgw.js", "home");
+    } else { ns.tprint("Hacking disabled due to insufficient memory for control plane.") }
 
-    ////share overhead
-    ns.tprint("Initializing sharing.");
-    ns.exec("hacks/shareLoop.js", "home");
+    if (ns.getServerMaxRam("home") >= env.homehgwBuffer + env.hostMemoryFloor) {
+        //start file discovery
+        await distribute.finderKeeper(ns);
+        ns.tprint("Initializing file scrapers.");
+    } else { ns.tprint("File discovery disabled due to insufficient memory for control plane.") }
 
     ns.tprint(`
     Helpful alias commands:

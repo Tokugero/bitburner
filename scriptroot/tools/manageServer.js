@@ -10,6 +10,7 @@ called to manage the manageable cluster and isn't hacking themselves.
 
 export async function copyAndHack(ns, server, files) {
     await ns.scp(files, "home", server.hostname);
+    await ns.write("/stats/reserved.js", 0, "w");
 
     ns.exec("hacks/node-hgw.js", server.hostname);
 

@@ -1,6 +1,6 @@
-import * as arrayJumpingGame from './contractTypes/arrayJumpingGame.js';
-import * as totalWaysToSum from './contractTypes/totalWaysToSum.js';
-import * as uniquePathsInAGridI from './contractTypes/uniquePathsInAGridI.js';
+import * as arrayJumpingGame from '/tools/contracts/contractTypes/arrayJumpingGame.js';
+import * as totalWaysToSum from '/tools/contracts/contractTypes/totalWaysToSum.js';
+import * as uniquePathsInAGridI from '/tools/contracts/contractTypes/uniquePathsInAGridI.js';
 
 /*
 

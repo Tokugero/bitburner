@@ -1,7 +1,6 @@
-import * as mapServers from './tools/mapServers';
 import * as manageServer from './tools/manageServer';
 import * as env from '.env.js';
-import * as mqp from './tools/queuePorts.js';
+import * as qp from './tools/queuePorts.js';
 
 
 /*
@@ -20,7 +19,7 @@ export async function main(ns) {
 /** @param {import("../../common/.").NS} ns */
 
 export async function gracefulHack(ns) {
-    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
+    let allServers = await qp.peekQueue(ns, env.serverListQueue);
     let mylevel = ns.getHackingLevel();
 
     for (const server of allServers) {
@@ -38,6 +37,10 @@ export async function gracefulHack(ns) {
                 ns.nuke(server.hostname);
                 await ns.sleep(20);
                 isRoot = ns.hasRootAccess(server.hostname);
+                if (isRoot) {
+                    await qp.writeQueue(ns, env.bigHackingQueue, server);
+                    await qp.writeQueue(ns, env.smallHackingQueue, server);
+                };
                 // Adding shim of 16 gig minimum ram to prevent servers from having to split their resources.
                 if (server.maxRam >= env.hostMemoryFloor && isRoot) {
                     let threads = manageServer.usableThreads(ns, server, "hacks/node-hgw.js");

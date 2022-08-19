@@ -1,6 +1,6 @@
-import * as mapServers from '../../mapServers.js';
-import * as contractHandler from './contractHandler.js';
-import * as mqp from './tools/queuePorts.js';
+import * as contractHandler from './tools/contracts/contractHandler.js';
+import * as qp from './tools/queuePorts.js';
+import * as env from '.env.js';
 
 /*
 
@@ -19,7 +19,7 @@ export async function main(ns) {
 /** @param {import("../../../common").NS} ns */
 
 export async function findChallenges(ns) {
-    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
+    let allServers = await qp.peekQueue(ns, env.serverListQueue);
     let challenges = "";
     let handledTypes = contractHandler.getHandledTypes()
     for (const server of allServers) {
@@ -34,8 +34,7 @@ export async function findChallenges(ns) {
                         ${"#".repeat(80)}
                         Challenge: ${file} - On: ${server.hostname} 
                         Type: ${contractType}
-                        ${"-".repeat(80)}
-                        ${ns.codingcontract.getDescription(file, server.hostname)} `;
+                        ${"-".repeat(80)}`;
                 };
             };
         };

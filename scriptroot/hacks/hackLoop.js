@@ -19,7 +19,7 @@ export async function hackLoop(ns, server, target, freeThreads) {
     let weakenTime = ns.getWeakenTime(target.hostname);
     let maxSleep = Math.max(hackTime, weakenTime);
     let minSleep = Math.min(hackTime, weakenTime);
-    let effectThreads = Math.floor(freeThreads * env.effectBuffer);
+    let effectThreads = Math.floor(Math.floor(freeThreads * env.effectBuffer), ns.hackAnalyzeThreads(target.hostname, target.moneyAvailable * env.effectBuffer));
     let weakenThreads = Math.ceil(freeThreads * env.weakenBuffer);
 
     ns.print(`Entering Hack loop.`);

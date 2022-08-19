@@ -4,6 +4,8 @@ in this list are a full detail object that defines the server, and includes some
 to help other functions. 
 
 Any definitions that should describe the server, should be stored here.
+
+Don't access this directly, use queuePorts.peekQueue(env.serverListQueue) to get a list of all servers.
 */
 
 /** @param {import("../../common/.").NS} ns */
