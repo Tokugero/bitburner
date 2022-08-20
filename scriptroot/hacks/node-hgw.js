@@ -4,6 +4,7 @@ import { growLoop } from './hacks/growLoop.js';
 import { weakenLoop } from './hacks/weakenLoop.js';
 import * as qp from './tools/queuePorts.js';
 import * as utils from './tools/utils.js';
+import * as mg from './tools/manageGrafana.js';
 
 
 /*
@@ -57,8 +58,13 @@ export async function main(ns) {
 export async function nodehgw(ns, server, target) {
     while (true) {
         target = ns.getServer(target.hostname);
-        await ns.wget(`${env.url}target=${target.hostname}&moneyMax=${target.moneyMax}&moneyAvailable=${target.moneyAvailable}&minDifficulty=${target.minDifficulty}&hackDifficulty=${target.hackDifficulty}`, `/dev/null.txt`);
-
+        await mg.submitMetrics(ns, "target", target.hostname,
+            [
+                { "name": "moneyMax", "value": target.moneyMax },
+                { "name": "moneyAvailable", "value": target.moneyAvailable },
+                { "name": "minDifficulty", "value": target.minDifficulty },
+                { "name": "hackDifficulty", "value": target.hackDifficulty }
+            ]);
         ns.print(`Starting new loop\n${"-".repeat(80)} \n\t$ = ${target.moneyAvailable}/${target.moneyMax} \n\tSecurity = ${target.minDifficulty}/${target.hackDifficulty}`);
         let freeThreads = Math.floor((server.maxRam - server.ramUsed) / env.hgwMemoryBuffer);
 

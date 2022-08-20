@@ -1,7 +1,7 @@
+import * as mg from './tools/manageGrafana.js';
 import * as env from '.env.js';
 
 /** @param {import("../../common").NS} ns */
-
 export async function main(ns) {
     const args = ns.flags([]);
 
@@ -13,7 +13,6 @@ export async function main(ns) {
 }
 
 /** @param {import("../../common").NS} ns */
-
 export async function growLoop(ns, server, target, freeThreads) {
     let growTime = ns.getGrowTime(target.hostname);
     let weakenTime = ns.getWeakenTime(target.hostname);
@@ -24,16 +23,14 @@ export async function growLoop(ns, server, target, freeThreads) {
 
     ns.print(`Entering Grow loop.`);
     ns.exec("hacks/weaken.js", server.hostname, weakenThreads, target.hostname);
-    await ns.wget(`${env.url}hgw=weaken&weakening=${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
     ns.print(`Grow sleeping for ${(maxSleep - minSleep / 1000 / 60)}`);
+    ns.exec("tools/managehgwMetrics.js", server.hostname, 1, "hgw", "weaken", server.hostname, target.hostname, weakenThreads, maxSleep - minSleep);
     await ns.sleep(maxSleep - minSleep);
-    await ns.wget(`${env.url}hgw=weaken&weakening=-${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
 
     ns.print(`${target.hostname} currently at ${target.moneyAvailable} money (max is ${target.moneyMax})`);
     ns.exec("hacks/grow.js", server.hostname, effectThreads, target.hostname);
-    await ns.wget(`${env.url}hgw=grow&growing=${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
+    ns.exec("hacks/managehgwMetrics.js", server.hostname, 1, "hgw", "grow", server.hostname, target.hostname, effectThreads, minSleep + 10000);
     // Offset the script runtime so that weaken finishes immediately after
     ns.print(`Grow sleeping for ${(minSleep / 1000 / 60)}`);
     await ns.sleep(minSleep + 10000);
-    await ns.wget(`${env.url}hgw=grow&growing=-${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
 }

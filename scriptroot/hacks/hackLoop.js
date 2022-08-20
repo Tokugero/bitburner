@@ -1,5 +1,5 @@
 import * as env from '.env.js';
-
+import * as mg from 'tools/manageGrafana.js';
 /** @param {import("../../common").NS} ns */
 
 export async function main(ns) {
@@ -24,15 +24,14 @@ export async function hackLoop(ns, server, target, freeThreads) {
 
     ns.print(`Entering Hack loop.`);
     ns.exec("/hacks/weaken.js", server.hostname, weakenThreads, target.hostname);
-    await ns.wget(`${env.url}hgw=weaken&weakening=${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
+
+    ns.exec("tools/managehgwMetrics.js", server.hostname, 1, "hgw", "weaken", server.hostname, target.hostname, weakenThreads, maxSleep - minSleep);
     ns.print(`Hack sleeping for ${(maxSleep - minSleep / 1000 / 60)}`);
     await ns.sleep(maxSleep - minSleep);
-    await ns.wget(`${env.url}hgw=weaken&weakening=-${weakenThreads}&server=${server.hostname}`, `/dev/null.txt`);
 
+    ns.exec("hacks/managehgwMetrics.js", server.hostname, 1, "hgw", "hack", server.hostname, target.hostname, effectThreads, minSleep + 10000);
     ns.exec("/hacks/hack.js", server.hostname, effectThreads, target.hostname);
-    await ns.wget(`${env.url}hgw=hack&hacking=${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
     // Offset the script runtime so that weaken finishes immediately after
     ns.print(`Hack sleeping for ${(minSleep / 1000 / 60)}`);
     await ns.sleep(minSleep + 10000);
-    await ns.wget(`${env.url}hgw=hack&hacking=-${effectThreads}&server=${server.hostname}`, `/dev/null.txt`);
 }
