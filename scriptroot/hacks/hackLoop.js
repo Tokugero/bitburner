@@ -19,7 +19,7 @@ export async function hackLoop(ns, server, target, freeThreads) {
     let weakenTime = ns.getWeakenTime(target.hostname);
     let maxSleep = Math.max(hackTime, weakenTime);
     let minSleep = Math.min(hackTime, weakenTime);
-    let effectThreads = Math.floor(Math.floor(freeThreads * env.effectBuffer), ns.hackAnalyzeThreads(target.hostname, target.moneyAvailable * env.effectBuffer));
+    let effectThreads = Math.ceil(Math.ceil(freeThreads * env.effectBuffer), ns.hackAnalyzeThreads(target.hostname, target.moneyAvailable * env.effectBuffer));
     let weakenThreads = Math.ceil(freeThreads * env.weakenBuffer);
 
     ns.print(`Entering Hack loop.`);
@@ -29,7 +29,7 @@ export async function hackLoop(ns, server, target, freeThreads) {
     ns.print(`Hack sleeping for ${(maxSleep - minSleep / 1000 / 60)}`);
     await ns.sleep(maxSleep - minSleep);
 
-    ns.exec("hacks/managehgwMetrics.js", server.hostname, 1, "hgw", "hack", server.hostname, target.hostname, effectThreads, minSleep + 10000);
+    ns.exec("tools/managehgwMetrics.js", server.hostname, 1, "hgw", "hack", server.hostname, target.hostname, effectThreads, minSleep + 10000);
     ns.exec("/hacks/hack.js", server.hostname, effectThreads, target.hostname);
     // Offset the script runtime so that weaken finishes immediately after
     ns.print(`Hack sleeping for ${(minSleep / 1000 / 60)}`);

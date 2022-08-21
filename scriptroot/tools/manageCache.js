@@ -8,7 +8,7 @@ export async function main(ns) {
     await updateDB(ns, env.bigHackingDB, env.bigHackingIPQueue, "server");
     await updateDB(ns, env.smallHackingDB, env.smallHackingIPQueue, "server");
     await ns.sleep(15000);
-    ns.spawn('tools/manageCache.js');
+    await ns.spawn('tools/manageCache.js');
 };
 
 /** @param {import("../common").NS} ns */
@@ -25,14 +25,15 @@ export async function cacheServers(ns) {
 /** @param {import("../common").NS} ns */
 async function updateDB(ns, db, queue, index) {
     let dbObject = await qp.peekQueue(ns, db);
-    if (dbObject == "NULL PORT DATA") { dbObject = {} };
 
     while (true) {
         let row = await qp.readQueue(ns, queue);
         if (row != "NULL PORT DATA") {
+            if (dbObject = "NULL PORT DATA") { dbObject = {}; }
             if (dbObject[row[index].hostname] === undefined) {
                 dbObject[row[index].hostname] = [row];
             } else {
+                if (dbObject = "NULL PORT DATA") { dbObject = {}; }
                 dbObject[row[index].hostname].push(row);
             }
         } else { break; };

@@ -12,5 +12,5 @@ export async function main(ns) {
 
     await ns.share();
 
-    ns.spawn("hacks/share.js", threads, threads);
+    await ns.spawn("hacks/share.js", threads, threads);
 }

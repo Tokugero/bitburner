@@ -18,7 +18,7 @@ export async function growLoop(ns, server, target, freeThreads) {
     let weakenTime = ns.getWeakenTime(target.hostname);
     let maxSleep = Math.max(growTime, weakenTime);
     let minSleep = Math.min(growTime, weakenTime);
-    let effectThreads = Math.floor(freeThreads * env.effectBuffer);
+    let effectThreads = Math.ceil(freeThreads * env.effectBuffer);
     let weakenThreads = Math.ceil(freeThreads * env.weakenBuffer);
 
     ns.print(`Entering Grow loop.`);
@@ -29,7 +29,7 @@ export async function growLoop(ns, server, target, freeThreads) {
 
     ns.print(`${target.hostname} currently at ${target.moneyAvailable} money (max is ${target.moneyMax})`);
     ns.exec("hacks/grow.js", server.hostname, effectThreads, target.hostname);
-    ns.exec("hacks/managehgwMetrics.js", server.hostname, 1, "hgw", "grow", server.hostname, target.hostname, effectThreads, minSleep + 10000);
+    ns.exec("tools/managehgwMetrics.js", server.hostname, 1, "hgw", "grow", server.hostname, target.hostname, effectThreads, minSleep + 10000);
     // Offset the script runtime so that weaken finishes immediately after
     ns.print(`Grow sleeping for ${(minSleep / 1000 / 60)}`);
     await ns.sleep(minSleep + 10000);

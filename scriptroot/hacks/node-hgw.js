@@ -33,7 +33,7 @@ export async function main(ns) {
             const server = await qp.readQueue(ns, env.bigHackingQueue)
             if (server == "NULL PORT DATA") { break; }
             else {
-                let reserved = parseInt(ns.read("/stats/reserved.js", server.hostname));
+                let reserved = parseInt(await ns.read("/stats/reserved.js", server.hostname));
                 if (!reserved || reserved < 0) {
                     reserved = 0;
                     await ns.write("/stats/reserved.js", 0, "w");
@@ -68,8 +68,6 @@ export async function nodehgw(ns, server, target) {
         ns.print(`Starting new loop\n${"-".repeat(80)} \n\t$ = ${target.moneyAvailable}/${target.moneyMax} \n\tSecurity = ${target.minDifficulty}/${target.hackDifficulty}`);
         let freeThreads = Math.floor((server.maxRam - server.ramUsed) / env.hgwMemoryBuffer);
 
-
-
         if (server.hostname == "home") {
             if (server.maxRam < env.homehgwBuffer) {
                 ns.tprint("You don't have a lot of ram, some of this may not work as expected. Upgrade to at least " + env.homehgwBuffer + " asap!");
@@ -78,21 +76,17 @@ export async function nodehgw(ns, server, target) {
             freeThreads = Math.floor((server.maxRam - env.homehgwBuffer) / env.hgwMemoryBuffer); // 2 = ram usage of hack/grow/weaken.js. 24 = headroom for this script + ctrl loop
         };
 
-        if (freeThreads == 0) {
-            freeThreads = 1;
-        }
-
         // Significantly drop security to get it ripe for pickin'
         if (target.hackDifficulty > (target.minDifficulty + 1) || server.maxRam < env.hostMemoryFloor) {
-            await weakenLoop(ns, server, target, freeThreads);
+            await weakenLoop(ns, server, target, freeThreads ? freeThreads : 1);
 
             // Start massively increasing money available, run security weakeners in tandem
         } else if (target.moneyAvailable < target.moneyMax * env.moneyBuffer && server.maxRam >= env.hostMemoryFloor) {
-            await growLoop(ns, server, target, freeThreads);
+            await growLoop(ns, server, target, freeThreads ? freeThreads : 1);
 
             // Do the hacking, run security weakeners in tandem
         } else if (server.maxRam >= env.hostMemoryFloor) {
-            await hackLoop(ns, server, target, freeThreads);
+            await hackLoop(ns, server, target, freeThreads ? freeThreads : 1);
 
         } else {
             await ns.sleep(100); // to prevent too aggressive loops from small hosts.

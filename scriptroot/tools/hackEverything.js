@@ -1,4 +1,4 @@
-import * as manageServer from './tools/manageServer';
+import * as manageServer from './tools/manageServer.js';
 import * as env from '.env.js';
 import * as qp from './tools/queuePorts.js';
 
@@ -13,7 +13,7 @@ A daemon to continually attempt to take over any hackable node visible to the pl
 
 export async function main(ns) {
     await gracefulHack(ns);
-    ns.spawn("/tools/hackEverything.js");
+    await ns.spawn("/tools/hackEverything.js");
 }
 
 /** @param {import("../../common/.").NS} ns */
@@ -40,9 +40,7 @@ export async function gracefulHack(ns) {
                 if (isRoot) {
                     await qp.writeQueue(ns, env.bigHackingQueue, server);
                     await qp.writeQueue(ns, env.smallHackingQueue, server);
-                };
-                // Adding shim of 16 gig minimum ram to prevent servers from having to split their resources.
-                if (server.maxRam >= env.hostMemoryFloor && isRoot) {
+
                     let threads = manageServer.usableThreads(ns, server, "hacks/node-hgw.js");
                     ns.exec('hacks/node-hgw.js', server.hostname, threads);
                 };

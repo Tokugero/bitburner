@@ -11,5 +11,5 @@ export async function main(ns) {
 
     await ns.grow("joesguns");
 
-    ns.spawn("hacks/exp.js", threads, threads);
+    await ns.spawn("hacks/exp.js", threads, threads);
 }

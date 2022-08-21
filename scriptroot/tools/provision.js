@@ -12,7 +12,7 @@ this will be the function that generates the majority of income.
 
 export async function main(ns) {
     await maxProvision(ns);
-    ns.spawn("tools/provision.js", 1);
+    await ns.spawn("tools/provision.js", 1);
 }
 
 /** @param {import("../../common").NS} ns */

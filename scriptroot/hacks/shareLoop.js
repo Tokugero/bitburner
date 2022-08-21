@@ -11,9 +11,9 @@ Consume some remaining unused headroom of servers for faction rep gain.
 export async function main(ns) {
     let thisServer = ns.getServer();
     let scriptRam = ns.getScriptRam("hacks/share.js", thisServer.hostname) + ns.getScriptRam("hacks/shareLoop.js", thisServer.hostname);
-    let threads = Math.floor((thisServer.maxRam - parseInt(ns.read("/stats/reserved.js"))) / scriptRam);
+    let threads = Math.floor((thisServer.maxRam - parseInt(await ns.read("stats/reserved.js"))) / scriptRam);
     if (qp.peekQueue(ns, env.bigHackingQueue) != "NULL PORT DATA") {
-        ns.spawn("node-hgw.js", 1);
+        await ns.spawn("hacks/node-hgw.js", 1);
     } else if (threads > 0) {
         ns.tprint(thisServer.hostname + " host is starting share");
         await shareLoop(ns, threads);
@@ -22,5 +22,5 @@ export async function main(ns) {
 /** @param {import("../common").NS} ns */
 
 export async function shareLoop(ns, threads) {
-    ns.spawn("hacks/share.js", threads, threads);
+    await ns.spawn("hacks/share.js", threads, threads);
 }

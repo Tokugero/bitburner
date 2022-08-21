@@ -13,7 +13,7 @@ assumed there is no other interesting files other than light lore and .cct chall
 
 export async function main(ns) {
     await findChallenges(ns);
-    ns.spawn("/tools/contracts/stealFiles.js");
+    await ns.spawn("/tools/contracts/stealFiles.js");
 }
 
 /** @param {import("../../../common").NS} ns */

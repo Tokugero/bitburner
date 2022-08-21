@@ -32,11 +32,11 @@ export async function upgradeNode(ns, ram, server, files) {
             await ns.sleep(20);
             if (server.maxRam < env.bigWeight) { }
             else {
-                ns.tprint("Trying to pop targets... ");
+                ns.tprint(`Trying to pop targets... ${server}`);
                 const db = await qp.peekQueue(ns, env.bigHackingDB);
+                ns.tprint(db);
                 if (db != "NULL PORT DATA") {
-                    ns.tprint("Got this many in hacking db: " + db.length);
-                    for (const row of db[server.hostname]) {
+                    for (const row of db[server]) {
                         ns.tprint("Writing to queue: " + row);
                         await qp.writeQueue(ns, env.bigHackingQueue, row["target"]);
                         ns.tprint(ns.peek(env.bigHackingQueue) + "\n in the queue");
@@ -56,6 +56,6 @@ export async function upgradeNode(ns, ram, server, files) {
 export async function purchaseServer(ns, ram, files) {
     ns.print("Purchasing new server")
     let server = ns.purchaseServer(`${ram}-node`, ram);
-    await ns.sleep(100);
+    await ns.sleep(1000);
     await manageServer.copyAndHack(ns, ns.getServer(server), files);
 }

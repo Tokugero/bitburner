@@ -66,6 +66,10 @@ export async function main(ns) {
         //start hacking
         ns.tprint("Initializing hacking a bit.");
         ns.exec("hacks/node-hgw.js", "home");
+
+        //start sleeve management
+        ns.tprint("Initializing sleeve management.");
+        ns.exec("tools/sleeves/manageSleeves.js", "home");
     } else { ns.tprint("Hacking disabled due to insufficient memory for control plane.") }
 
     if (ns.getServerMaxRam("home") >= env.homehgwBuffer + env.hostMemoryFloor) {

@@ -5255,7 +5255,7 @@ export interface NS {
    * ```ts
    * // NS2:
    * //The following example will execute the script ‘foo.script’ with 10 threads and the arguments ‘foodnstuff’ and 90:
-   * ns.spawn('foo.script', 10, 'foodnstuff', 90);
+   * await ns.spawn('foo.script', 10, 'foodnstuff', 90);
    * ```
    * @param script - Filename of script to execute.
    * @param numThreads - Number of threads to spawn new script with. Will be rounded to nearest integer.

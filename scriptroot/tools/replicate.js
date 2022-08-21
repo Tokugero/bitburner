@@ -35,7 +35,7 @@ export async function replicate(ns) {
             await ns.rm("/stats/", server.hostname);
 
             // copy new files
-            await ns.scp(files, "home", server.hostname);
+            await ns.scp(files, server.hostname, "home");
             await ns.mv(server.hostname, "/templates/reserved.js", "/stats/reserved.js");
         };
     };
