@@ -16,17 +16,17 @@ export async function main(ns) {
     // collect metrics for player
     await mg.submitMetrics(ns, "player", "1",
         [
-            { "name": "money", "value": player.money },
-            { "name": "entropy", "value": player.entropy },
-            { "name": "hacking", "value": player.hacking },
-            { "name": "str", "value": player.strength },
-            { "name": "dex", "value": player.dexterity },
-            { "name": "def", "value": player.defense },
-            { "name": "agi", "value": player.agility },
-            { "name": "cha", "value": player.charisma },
-            { "name": "int", "value": player.intelligence },
-            { "name": "location", "value": player.location },
-            { "name": "totalPlaytime", "value": player.totalPlaytime }
+            { "name": "money", "value": player.skills.money },
+            { "name": "entropy", "value": player.skills.entropy },
+            { "name": "hacking", "value": player.skills.hacking },
+            { "name": "str", "value": player.skills.strength },
+            { "name": "dex", "value": player.skills.dexterity },
+            { "name": "def", "value": player.skills.defense },
+            { "name": "agi", "value": player.skills.agility },
+            { "name": "cha", "value": player.skills.charisma },
+            { "name": "int", "value": player.skills.intelligence },
+            { "name": "location", "value": player.skills.location },
+            { "name": "totalPlaytime", "value": player.skills.totalPlaytime }
         ]);
 
     // collect metrics for all servers other than home

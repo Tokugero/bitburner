@@ -12,7 +12,7 @@ This is a group of expensive functions that only need to be called when required
 // TODO: move this into manageServer or change to upgrade handler
 
 /** @param {import("../../common").NS} ns */
-export async function upgradeNodes(ns, files, ram) {
+export async function upgradeNodes(ns, ram, files) {
     var cloudNodes = ns.getPurchasedServers();
     for (const node of cloudNodes) {
         if (ns.getServerMaxRam(node) < ram) {
@@ -32,10 +32,9 @@ export async function upgradeNode(ns, ram, server, files) {
             await ns.sleep(20);
             if (server.maxRam < env.bigWeight) { }
             else {
-                ns.tprint(`Trying to pop targets... ${server}`);
+                ns.print(`Trying to pop targets... ${server}`);
                 const db = await qp.peekQueue(ns, env.bigHackingDB);
-                ns.tprint(db);
-                if (db != "NULL PORT DATA") {
+                if (db !== "NULL PORT DATA" && db[server] != undefined) {
                     for (const row of db[server]) {
                         ns.tprint("Writing to queue: " + row);
                         await qp.writeQueue(ns, env.bigHackingQueue, row["target"]);

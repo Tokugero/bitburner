@@ -32,7 +32,7 @@ export async function provision(ns, upgradeRam = 16) {
         };
         if (minRam < upgradeRam) {
             ns.toast("Upgrading nodes to " + upgradeRam + "GB ram.", "success");
-            await manageUpgrade.upgradeNodes(ns, files, upgradeRam);
+            await manageUpgrade.upgradeNodes(ns, upgradeRam, files);
         };
         if (ns.getPurchasedServers().length <= ns.getPurchasedServerLimit()) {
             ns.toast("Below limit, purchasing first servers.", "success");

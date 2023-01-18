@@ -16,7 +16,7 @@ async function sleeves(ns) {
 
     for (let i = 0; i < sleeveCount; i++) {
         const sleeveStats = {
-            "stats": ns.sleeve.getSleeveStats(i),
+            "stats": ns.sleeve.getSleeve(i),
             "task": (ns.sleeve.getTask(i) != "Idle" ? ns.sleeve.getTask(i) : null),
             "augs": ns.sleeve.getSleeveAugmentations(i)
         }
@@ -36,15 +36,15 @@ export async function sleeveMonitoring(ns) {
     for (const sleeve in sleeves) {
         await mg.submitMetrics(ns, "sleeve", sleeve,
             [
-                { "name": "agi", "value": sleeves[sleeve].stats.agility },
-                { "name": "str", "value": sleeves[sleeve].stats.strength },
-                { "name": "cha", "value": sleeves[sleeve].stats.charisma },
-                { "name": "def", "value": sleeves[sleeve].stats.defense },
-                { "name": "dex", "value": sleeves[sleeve].stats.dexterity },
-                { "name": "hacking", "value": sleeves[sleeve].stats.hacking },
-                { "name": "memory", "value": sleeves[sleeve].stats.memory },
-                { "name": "shock", "value": sleeves[sleeve].stats.shock },
-                { "name": "sync", "value": sleeves[sleeve].stats.sync },
+                { "name": "agi", "value": sleeves[sleeve].skills.agility },
+                { "name": "str", "value": sleeves[sleeve].skills.strength },
+                { "name": "cha", "value": sleeves[sleeve].skills.charisma },
+                { "name": "def", "value": sleeves[sleeve].skills.defense },
+                { "name": "dex", "value": sleeves[sleeve].skills.dexterity },
+                { "name": "hacking", "value": sleeves[sleeve].skills.hacking },
+                { "name": "memory", "value": sleeves[sleeve].skills.memory },
+                { "name": "shock", "value": sleeves[sleeve].skills.shock },
+                { "name": "sync", "value": sleeves[sleeve].skills.sync },
                 { "name": "task", "value": (sleeves[sleeve].task ? sleeves[sleeve].task.type : "") }
             ]
         );

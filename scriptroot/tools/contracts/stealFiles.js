@@ -23,6 +23,9 @@ export async function findChallenges(ns) {
     let challenges = "";
     let handledTypes = contractHandler.getHandledTypes()
     for (const server of allServers) {
+        if (server.hostname === ns.getServer(server.hostname).hostname) {
+            continue;
+        }
         let findFiles = ns.ls(server.hostname, ".cct");
         if (findFiles.length > 0) {
             for (const file of findFiles) {
