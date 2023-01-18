@@ -9,7 +9,8 @@ called to manage the manageable cluster and isn't hacking themselves.
 /** @param {import("../../common").NS} ns */
 
 export async function copyAndHack(ns, server, files) {
-    await ns.scp(files, "home", server.hostname);
+    await ns.scp(files, server.hostname, "home");
+    await ns.write("/stats/reserved.js", 0, "w");
 
     ns.exec("hacks/node-hgw.js", server.hostname);
 

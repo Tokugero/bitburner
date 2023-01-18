@@ -4,6 +4,8 @@ in this list are a full detail object that defines the server, and includes some
 to help other functions. 
 
 Any definitions that should describe the server, should be stored here.
+
+Don't access this directly, use queuePorts.peekQueue(env.serverListQueue) to get a list of all servers.
 */
 
 /** @param {import("../../common/.").NS} ns */
@@ -24,7 +26,6 @@ export async function getAllServers(ns) {
 /** @param {import("../../common/.").NS} ns */
 
 async function getServersDetails(ns, parentNode, origin = parentNode, trail = [], branch = []) {
-    // TODO: refactor this to be key filterable rather than just a list
     let base = ns.scan(parentNode.hostname);
     trail = [...trail, parentNode.hostname];
     for (const server of base) {

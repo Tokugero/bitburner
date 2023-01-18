@@ -16,12 +16,12 @@ export function solve(data) {
 
     let minimum = data[0];
     let maximum = data[0];
-    for (const day in data){
-        if (day+1 >= data.length){
+    for (const day in data) {
+        if (day + 1 >= data.length) {
             break;
-        } else if (data[day] < data[(day+1)]){
+        } else if (data[day] < data[(day + 1)]) {
             minimum = day;
-        } else if (data[day] > data[(day+1)]) {
+        } else if (data[day] > data[(day + 1)]) {
             maximum = day;
         };
     };

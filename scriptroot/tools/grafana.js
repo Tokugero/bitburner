@@ -1,7 +1,6 @@
-import * as mapServers from 'tools/mapServers.js';
 import * as env from '.env.js';
-import * as mqp from 'tools/queuePorts.js';
-
+import * as qp from 'tools/queuePorts.js';
+import * as mg from 'tools/manageGrafana.js';
 /*
 
 Manage statistics that need to regularly be sent to grafana.
@@ -11,10 +10,65 @@ Manage statistics that need to regularly be sent to grafana.
 /** @param {import("../../common").NS} ns */
 
 export async function main(ns) {
-    let playerMoney = ns.getServerMoneyAvailable("home");
-    await ns.wget(`${env.url}player=1&money=${playerMoney}`, `/dev/null.txt`);
-    for (const serverDetails of await mqp.peekQueue(ns, env.serverListQueue)) {
-        await ns.wget(`${env.url}server=${serverDetails.hostname}&maxRam=${serverDetails.maxRam}&usedRam=${serverDetails.ramUsed}&cpu=${serverDetails.cpuCores}&moneyMax=${serverDetails.moneyMax}&moneyAvail=${serverDetails.moneyAvailable}&hacked=${(serverDetails.hasAdminRights ? 1 : 0)}&owned=${(serverDetails.purchasedByPlayer ? 1 : 0)}`, `/dev/null.txt`);
+    const player = ns.getPlayer();
+    const home = ns.getServer("home");
+
+    // collect metrics for player
+    await mg.submitMetrics(ns, "player", "1",
+        [
+            { "name": "money", "value": player.skills.money },
+            { "name": "entropy", "value": player.skills.entropy },
+            { "name": "hacking", "value": player.skills.hacking },
+            { "name": "str", "value": player.skills.strength },
+            { "name": "dex", "value": player.skills.dexterity },
+            { "name": "def", "value": player.skills.defense },
+            { "name": "agi", "value": player.skills.agility },
+            { "name": "cha", "value": player.skills.charisma },
+            { "name": "int", "value": player.skills.intelligence },
+            { "name": "location", "value": player.skills.location },
+            { "name": "totalPlaytime", "value": player.skills.totalPlaytime }
+        ]);
+
+    // collect metrics for all servers other than home
+    for (const serverDetails of await qp.peekQueue(ns, env.serverListQueue)) {
+        await mg.submitMetrics(ns, "serverDetail", serverDetails.hostname,
+            [
+                { "name": "maxRam", "value": serverDetails.maxRam },
+                { "name": "ramUsed", "value": serverDetails.ramUsed },
+                { "name": "ramFree", "value": serverDetails.maxRam - serverDetails.ramUsed },
+                { "name": "cpu", "value": serverDetails.cpuCores },
+                { "name": "portsRequiured", "value": serverDetails.portsRequiured },
+                { "name": "moneyMax", "value": serverDetails.moneyMax },
+                { "name": "moneyAvail", "value": serverDetails.moneyAvailable },
+                { "name": "hacked", "value": (serverDetails.hasAdminRights ? 1 : 0) },
+                { "name": "owned", "value": (serverDetails.purchasedByPlayer ? 1 : 0) }
+            ]);
     };
-    ns.spawn("tools/grafana.js");
+
+    // collect metrics for home server
+    await mg.submitMetrics(ns, "serverDetail", home.hostname,
+        [
+            { "name": "maxRam", "value": home.maxRam },
+            { "name": "ramUsed", "value": home.ramUsed },
+            { "name": "ramFree", "value": home.maxRam - home.ramUsed },
+            { "name": "cpu", "value": home.cpuCores },
+            { "name": "moneyMax", "value": home.moneyMax },
+            { "name": "moneyAvail", "value": home.moneyAvailable },
+            { "name": "hacked", "value": (home.hasAdminRights ? 1 : 0) },
+            { "name": "owned", "value": (home.purchasedByPlayer ? 1 : 0) },
+            { "name": "home", "value": 1 }
+        ]);
+    await ns.spawn("tools/grafana.js");
 };
+
+
+// other things to get with queue env.monitoringQueue
+
+// server specific stats (already doing this)
+// player specific stats
+// query nodes in hackingQueues
+// Sleeve status
+// update hacking specific data
+// Hacknet status?
+
+// format queue and dump into influx

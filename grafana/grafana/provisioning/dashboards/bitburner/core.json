@@ -91,6 +91,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "displayName": "${__field.name}",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -101,19 +102,22 @@
               }
             ]
           },
-          "unit": "currencyUSD"
+          "unit": "none"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 5,
-        "w": 4,
+        "w": 11,
         "x": 4,
         "y": 0
       },
-      "id": 7,
+      "id": 5,
       "options": {
-        "orientation": "auto",
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -121,8 +125,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "text": {},
+        "textMode": "auto"
       },
       "pluginVersion": "8.3.3",
       "targets": [
@@ -131,26 +135,80 @@
             "type": "influxdb",
             "uid": "PE46F8281683B3570"
           },
-          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    r._field == \"money\"\r\n  )     |> derivative(unit: 10m)\r\n",
+          "query": "from(bucket: \"bitburner\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"player\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"_field\"] != \"totalPlaytime\" and r[\"_field\"] != \"money\" and r[\"_field\"] != \"entropy\")\r\n  |> yield(name: \"last\")",
           "refId": "A"
         }
       ],
-      "title": "Player Money Rate (10m)",
+      "title": "Player Stats",
       "transparent": true,
-      "type": "gauge"
+      "type": "stat"
     },
     {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "PE46F8281683B3570"
-      },
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
           },
           "mappings": [],
-          "max": 100,
+          "unit": "gbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 2,
+        "x": 15,
+        "y": 0
+      },
+      "id": 7,
+      "options": {
+        "displayLabels": [],
+        "legend": {
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "PE46F8281683B3570"
+          },
+          "query": "from(bucket: \"bitburner\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"serverDetail\"] == \"home\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ramFree\" or r[\"_field\"] == \"ramUsed\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Home Memory Used",
+      "transformations": [],
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -159,28 +217,32 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unit": "ms"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 21,
-        "w": 11,
-        "x": 13,
+        "h": 5,
+        "w": 5,
+        "x": 19,
         "y": 0
       },
-      "id": 5,
+      "id": 6,
       "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
           "fields": "",
-          "values": true
+          "values": false
         },
-        "showUnfilled": true
+        "text": {},
+        "textMode": "auto"
       },
       "pluginVersion": "8.3.3",
       "targets": [
@@ -189,19 +251,15 @@
             "type": "influxdb",
             "uid": "PE46F8281683B3570"
           },
-          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) => r._field =~ /owned|hacked|usedRam|maxRam/)\r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> filter(fn: (r) => r.owned == 0 and r.hacked == 1)\r\n  |> group()\r\n  |> unique(column: \"server\")\r\n  |> map(fn: (r) => ({ server: r.server, usedPercent: float(v: r.usedRam) / float(v: r.maxRam) * 100.0}))\r\n  |> drop(columns: [\"_field\", \"_measurement\", \"host\", \"_time\", \"_value\", \"_start\", \"_stop\", \"hacked\", \"owned\"])\r\n  |> sort(columns: [\"usedRam\"], desc: true)\r\n",
+          "query": "from(bucket: \"bitburner\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_listener_v2\")\r\n  |> filter(fn: (r) => r[\"player\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"totalPlaytime\")\r\n  |> yield(name: \"last\")",
           "refId": "A"
         }
       ],
-      "title": "Hacked Servers",
+      "title": "Total Play Time",
       "transparent": true,
-      "type": "bargauge"
+      "type": "stat"
     },
     {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "PE46F8281683B3570"
-      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -251,44 +309,11 @@
           },
           "unit": "none"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "moneyAvailable"
-            },
-            "properties": [
-              {
-                "id": "custom.axisPlacement",
-                "value": "right"
-              },
-              {
-                "id": "unit",
-                "value": "currencyUSD"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "moneyMax"
-            },
-            "properties": [
-              {
-                "id": "custom.axisPlacement",
-                "value": "right"
-              },
-              {
-                "id": "unit",
-                "value": "currencyUSD"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 13,
+        "w": 20,
         "x": 0,
         "y": 5
       },
@@ -309,59 +334,93 @@
             "type": "influxdb",
             "uid": "PE46F8281683B3570"
           },
-          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._measurement == \"http_listener_v2\" and\r\n    exists r.target\r\n  )\r\n  |> aggregateWindow(every: 1m, fn: max)\r\n",
+          "query": "from(bucket: \"bitburner\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_listener_v2\")\r\n  |> filter(fn: (r) => exists r.target)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"weakening\" or r[\"_field\"] == \"hacking\" or r[\"_field\"] == \"growing\")\r\n  |> group(columns: [\"_field\", \"target\"])\r\n  |> aggregateWindow(every: 1m, fn: sum, createEmpty: false)\r\n",
           "refId": "A"
         }
       ],
-      "title": "Target Server",
+      "title": "HGW Stats",
       "transparent": true,
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "PE46F8281683B3570"
-      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
             }
           },
+          "displayName": "${__field.labels.target}",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 4,
+        "x": 20,
+        "y": 5
+      },
+      "id": 12,
+      "options": {
+        "displayLabels": [
+          "name"
+        ],
+        "legend": {
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "PE46F8281683B3570"
+          },
+          "query": "from(bucket: \"bitburner\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_listener_v2\")\r\n  |> filter(fn: (r) => r[\"hgw\"] == \"grow\" or r[\"hgw\"] == \"hack\" or r[\"hgw\"] == \"weaken\")\r\n  |> group(columns: [\"target\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Target Ratios",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "${__field.labels.serverDetail}",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "super-light-blue",
                 "value": null
+              },
+              {
+                "color": "dark-blue",
+                "value": 1
+              },
+              {
+                "color": "dark-green",
+                "value": 2
               }
             ]
           },
@@ -370,61 +429,120 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 13,
+        "h": 26,
+        "w": 10,
         "x": 0,
         "y": 13
       },
-      "id": 3,
+      "id": 9,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "mode": "single"
-        }
+        "text": {},
+        "textMode": "name"
       },
+      "pluginVersion": "8.3.3",
       "targets": [
         {
           "datasource": {
             "type": "influxdb",
             "uid": "PE46F8281683B3570"
           },
-          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) => exists r.hgw)\r\n  |> drop(columns: [\"server\"])\r\n  |> aggregateWindow(every: 1m, fn: sum)\r\n  |> cumulativeSum()",
+          "query": "data = from(bucket: \"bitburner\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_listener_v2\")\r\n\r\nallHosts = data \r\n  |> filter(fn: (r) => r[\"_field\"] == \"hacked\")\r\n  |> group(columns: [\"serverDetail\", \"_field\"])\r\n  |> last()\r\n\r\ntargets = data \r\n  |> filter(fn: (r) => r[\"hgw\"] == \"grow\" or r[\"hgw\"] == \"hack\" or r[\"hgw\"] == \"weaken\")\r\n  |> group(columns: [\"target\"])\r\n  |> rename(columns: {target: \"serverDetail\"})\r\n  |> last()\r\n\r\nunion(tables: [allHosts, targets])\r\n  |> group(columns: [\"serverDetail\", \"_time\"])\r\n  |> sum()\r\n  |> group(columns: [\"serverDetail\"])\r\n  |> sum()\r\n  ",
           "refId": "A"
         }
       ],
-      "title": "HGW running statistics",
+      "title": "Hacked Servers",
+      "transformations": [],
       "transparent": true,
-      "type": "timeseries"
+      "type": "stat"
     },
     {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "PE46F8281683B3570"
-      },
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "thresholds"
           },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisSoftMin": 0,
-            "fillOpacity": 49,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1
-          },
+          "displayName": "${__field.labels.serverDetail}",
           "mappings": [],
-          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 1
+              },
+              {
+                "color": "dark-blue",
+                "value": 1000000
+              },
+              {
+                "color": "dark-green",
+                "value": 1000000000
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 26,
+        "w": 10,
+        "x": 10,
+        "y": 13
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "PE46F8281683B3570"
+          },
+          "query": "from(bucket: \"bitburner\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_listener_v2\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"moneyAvail\")\r\n  |> group(columns: [\"serverDetail\", \"_field\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Hacked Servers",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "displayName": "${__field.labels.target}",
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -438,27 +556,23 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 23,
-        "w": 11,
-        "x": 13,
-        "y": 21
+        "h": 22,
+        "w": 4,
+        "x": 20,
+        "y": 17
       },
-      "id": 6,
+      "id": 13,
       "options": {
-        "barWidth": 0.47,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
+        "displayMode": "basic",
         "orientation": "horizontal",
-        "showValue": "auto",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single"
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "xTickLabelRotation": 0
+        "showUnfilled": false
       },
       "pluginVersion": "8.3.3",
       "targets": [
@@ -467,16 +581,72 @@
             "type": "influxdb",
             "uid": "PE46F8281683B3570"
           },
-          "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) => r._field =~ /owned|hacked|usedRam|maxRam/)\r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> filter(fn: (r) => r.owned == 1 and r.hacked == 1)\r\n  |> group()\r\n  |> unique(column: \"server\")\r\n  |> map(fn: (r) => ({ server: r.server, usedPercent: float(v: r.usedRam) / float(v: r.maxRam) * 100.0}))\r\n  |> drop(columns: [\"_field\", \"_measurement\", \"host\", \"_time\", \"_value\", \"_start\", \"_stop\", \"hacked\", \"owned\"])\r\n  |> sort(columns: [\"server\", \"usedRam\"], desc: true)\r\n",
+          "query": "from(bucket: \"bitburner\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_listener_v2\")\r\n  |> filter(fn: (r) => r[\"hgw\"] == \"grow\" or r[\"hgw\"] == \"hack\" or r[\"hgw\"] == \"weaken\")\r\n  |> group(columns: [\"target\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)\r\n",
           "refId": "A"
         }
       ],
-      "title": "Owned Servers",
+      "title": "Target Ratios",
       "transparent": true,
-      "type": "barchart"
+      "type": "bargauge"
+    },
+    {
+      "gridPos": {
+        "h": 28,
+        "w": 18,
+        "x": 0,
+        "y": 39
+      },
+      "id": 14,
+      "options": {
+        "dataMapping": {
+          "aggregationType": "target",
+          "baselineRtUpper": "",
+          "errorRateColumn": "",
+          "errorRateOutgoingColumn": "",
+          "extOrigin": "server",
+          "extTarget": "",
+          "requestRateColumn": "_value",
+          "requestRateOutgoingColumn": "",
+          "responseTimeColumn": "",
+          "responseTimeOutgoingColumn": "",
+          "showDummyData": false,
+          "sourceColumn": "target",
+          "targetColumn": "",
+          "type": ""
+        },
+        "drillDownLink": "",
+        "externalIcons": [],
+        "filterEmptyConnections": true,
+        "icons": [],
+        "showBaselines": false,
+        "showConnectionStats": true,
+        "showDebugInformation": true,
+        "style": {
+          "dangerColor": "rgb(196, 22, 42)",
+          "healthyColor": "green",
+          "noDataColor": "rgb(123, 123, 138)"
+        },
+        "sumTimings": true,
+        "timeFormat": "m"
+      },
+      "pluginVersion": "4.0.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "PE46F8281683B3570"
+          },
+          "query": "from(bucket: \"bitburner\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_listener_v2\")\r\n  |> filter(fn: (r) => r[\"hgw\"] == \"grow\" or r[\"hgw\"] == \"hack\" or r[\"hgw\"] == \"weaken\")\r\n  |> group(columns: [\"target\", \"server\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)\r\n  |> last()\r\n  |> group()",
+          "refId": "A"
+        }
+      ],
+      "title": "Hack Mesh",
+      "transformations": [],
+      "transparent": true,
+      "type": "novatec-sdg-panel"
     }
   ],
-  "refresh": "30s",
+  "refresh": "10s",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],
@@ -489,8 +659,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "BitBurner",
+  "title": "BitBurner-all-up",
   "uid": "xLXhoUJnz",
-  "version": 9,
+  "version": 22,
   "weekStart": ""
 }

@@ -1,4 +1,5 @@
 import * as env from '.env.js';
+import * as mg from 'tools/manageGrafana.js';
 
 /** @param {import("../../common").NS} ns */
 
@@ -16,7 +17,13 @@ export async function main(ns) {
 export async function loopController(ns, server, target, targets) {
     while (true) {
         let portionRam = Math.floor(server.maxRam / targets);
-        await ns.wget(`${env.url}target=${target.hostname}&moneyMax=${target.moneyMax}&moneyAvailable=${target.moneyAvailable}&minDifficulty=${target.minDifficulty}&hackDifficulty=${target.hackDifficulty}`, `/dev/null.txt`);
+        await mg.submitMetrics(ns, "target", target.hostname,
+            [
+                { "name": "moneyMax", "value": target.moneyMax },
+                { "name": "moneyAvailable", "value": target.moneyAvailable },
+                { "name": "minDifficulty", "value": target.minDifficulty },
+                { "name": "hackDifficulty", "value": target.hackDifficulty }
+            ]);
 
         ns.print(`Starting new loop\n${"-".repeat(80)} \n\t$ = ${target.moneyAvailable}/${target.moneyMax} \n\tSecurity = ${target.minDifficulty}/${target.hackDifficulty}`);
         let freeThreads = Math.floor(portionRam / env.hgwMemoryBuffer);

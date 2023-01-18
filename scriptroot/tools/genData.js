@@ -1,6 +1,6 @@
-import * as mapServers from 'tools/mapServers.js';
 import * as cloudcompute from 'automation/cloudcompute.js';
-import * as mqp from './tools/queuePorts.js';
+import * as qp from './tools/queuePorts.js';
+import * as env from '.env.js';
 
 /*
 
@@ -32,7 +32,7 @@ export async function main(ns) {
     } else if (args.search) {
         ns.tprint(`\n${JSON.stringify(await searchServers(ns, args.search), null, 2)}`);
     } else if (args.backdoors) {
-        const notables = ["CSEC", "I.I.I.I", "avmnite-02h", "run4theh111z", "The-Cave"];
+        const notables = ["CSEC", "I.I.I.I", "avmnite-02h", "run4theh111z", "The-Cave", "w0r1d_d43m0n"];
         for (const noteable of notables) {
             const detailedNoteable = ns.getServer(noteable);
             if (detailedNoteable.backdoorInstalled) {
@@ -63,7 +63,7 @@ export async function main(ns) {
 
 export async function connectionString(ns, remote) {
 
-    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
+    let allServers = await qp.peekQueue(ns, env.serverListQueue);
     var path = "Not found.";
     for (const server of allServers) {
         if (server.hostname === remote) {
@@ -74,7 +74,7 @@ export async function connectionString(ns, remote) {
 }
 
 export async function searchServers(ns, search) {
-    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
+    let allServers = await qp.peekQueue(ns, env.serverListQueue);
     let results = [];
     for (const server of allServers) {
         if (server.hostname.toLowerCase().includes(search.toLowerCase())) {

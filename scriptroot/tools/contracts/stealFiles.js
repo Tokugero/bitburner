@@ -1,6 +1,6 @@
-import * as mapServers from '../../mapServers.js';
-import * as contractHandler from './contractHandler.js';
-import * as mqp from './tools/queuePorts.js';
+import * as contractHandler from './tools/contracts/contractHandler.js';
+import * as qp from './tools/queuePorts.js';
+import * as env from '.env.js';
 
 /*
 
@@ -13,16 +13,19 @@ assumed there is no other interesting files other than light lore and .cct chall
 
 export async function main(ns) {
     await findChallenges(ns);
-    ns.spawn("/tools/contracts/stealFiles.js");
+    await ns.spawn("/tools/contracts/stealFiles.js");
 }
 
 /** @param {import("../../../common").NS} ns */
 
 export async function findChallenges(ns) {
-    let allServers = await mqp.peekQueue(ns, env.serverListQueue);
+    let allServers = await qp.peekQueue(ns, env.serverListQueue);
     let challenges = "";
     let handledTypes = contractHandler.getHandledTypes()
     for (const server of allServers) {
+        if (server.hostname === ns.getServer(server.hostname).hostname) {
+            continue;
+        }
         let findFiles = ns.ls(server.hostname, ".cct");
         if (findFiles.length > 0) {
             for (const file of findFiles) {
@@ -34,8 +37,7 @@ export async function findChallenges(ns) {
                         ${"#".repeat(80)}
                         Challenge: ${file} - On: ${server.hostname} 
                         Type: ${contractType}
-                        ${"-".repeat(80)}
-                        ${ns.codingcontract.getDescription(file, server.hostname)} `;
+                        ${"-".repeat(80)}`;
                 };
             };
         };

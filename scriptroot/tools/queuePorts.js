@@ -1,10 +1,5 @@
-import * as env from '.env.js';
-import * as ms from './tools/mapServers.js';
-
 /** @param {import("../common").NS} ns */
 export async function main(ns) {
-    await cacheServers(ns);
-    ns.sleep(10000);
 };
 
 /** @param {import("../common").NS} ns */
@@ -16,25 +11,46 @@ export async function peekQueue(ns, port) {
             return parsed;
         } else {
             ns.print("Retrying peek... " + port);
-            ns.sleep(100);
+            await ns.sleep(1000);
         }
     }
     ns.print("Failed to peek queue " + port);
-    return [];
+    return "NULL PORT DATA";
 }
 
 /** @param {import("../common").NS} ns */
-export async function cacheServers(ns) {
-    const serverListPort = ns.getPortHandle(env.serverListQueue);
+export async function writeQueue(ns, port, data) {
+    for (let i = 0; i < 3; i++) {
+        if (await ns.tryWritePort(port, JSON.stringify(data))) {
+            ns.print("Successfully wrote to queue " + port);
+            return;
+        } else {
+            ns.print("Retrying write... " + port);
+            await ns.sleep(1000);
+        }
+    }
+    ns.print("Failed to write to queue " + port);
+    return "NULL PORT DATA";
+}
 
-    let servers = await ms.getAllServers(ns);
+/** @param {import("../common").NS} ns */
+export async function readQueue(ns, port) {
+    for (let i = 0; i < 3; i++) {
+        const result = await ns.readPort(port);
+        if (result != "NULL PORT DATA") {
+            const parsed = JSON.parse(result);
+            ns.print(parsed);
+            return parsed;
+        } else {
+            ns.print("Retrying read... " + port);
+            await ns.sleep(1000);
+        }
+    }
+    ns.print("Failed to read from queue " + port);
+    return "NULL PORT DATA";
+}
 
-    ns.print("Clearing server list queue");
-    serverListPort.clear();
-
-    ns.print("Storing servers in cache.");
-    serverListPort.write(JSON.stringify(servers));
-    ns.print("Done storing " + servers.length + " servers in cache.");
-
-    return serverListPort;
-};
+/** @param {import("../common").NS} ns */
+export async function clearQueue(ns, port) {
+    await ns.clearPort(port);
+}

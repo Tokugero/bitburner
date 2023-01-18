@@ -1,4 +1,5 @@
 import * as env from '.env.js';
+import * as mg from 'tools/manageGrafana.js';
 
 /** @param {import("../../common").NS} ns */
 
@@ -15,13 +16,11 @@ export async function main(ns) {
 /** @param {import("../../common").NS} ns */
 
 export async function weakenLoop(ns, server, target, freeThreads) {
-    let minSleep = ns.getWeakenTime(target.hostname);
+    let minSleep = ns.getWeakenTime(target.hostname) + 1000;
 
     ns.print(`${target.hostname} currently at ${target.hackDifficulty} difficulty (min is ${target.minDifficulty})\nEntering weaken loop.`);
     ns.exec("hacks/weaken.js", server.hostname, freeThreads, target.hostname);
-    await ns.wget(`${env.url}hgw=weaken&weakening=${freeThreads}&server=${server.hostname}`, `/dev/null.txt`);
+    ns.exec("tools/managehgwMetrics.js", server.hostname, 1, "hgw", "weaken", server.hostname, target.hostname, freeThreads, minSleep);
     ns.print(`Max weaken sleeping for ${(minSleep / 1000 / 60)}`);
-    await ns.sleep(minSleep + 1000);
-
-    await ns.wget(`${env.url}hgw=weaken&weakening=-${freeThreads}&server=${server.hostname}`, `/dev/null.txt`);
+    await ns.sleep(minSleep);
 }

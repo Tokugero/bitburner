@@ -12,7 +12,7 @@ this will be the function that generates the majority of income.
 
 export async function main(ns) {
     await maxProvision(ns);
-    ns.spawn("tools/provision.js", 1);
+    await ns.spawn("tools/provision.js", 1);
 }
 
 /** @param {import("../../common").NS} ns */
@@ -32,7 +32,7 @@ export async function provision(ns, upgradeRam = 16) {
         };
         if (minRam < upgradeRam) {
             ns.toast("Upgrading nodes to " + upgradeRam + "GB ram.", "success");
-            await manageUpgrade.upgradeNodes(ns, files, upgradeRam);
+            await manageUpgrade.upgradeNodes(ns, upgradeRam, files);
         };
         if (ns.getPurchasedServers().length <= ns.getPurchasedServerLimit()) {
             ns.toast("Below limit, purchasing first servers.", "success");
